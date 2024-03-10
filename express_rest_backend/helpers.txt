@@ -1,0 +1,28 @@
+docker run --name mysql_mm_db -p 3306:3306 -e -d mysql/mysql-server:latest
+docker logs mysql 2>&1 | grep GENERATED
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'root';
+
+CREATE USER 'root'@'ip_address' IDENTIFIED BY 'some_pass';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'ip_address';
+
+
+============JS=============
+
+INSTEAD OF USING CALLBACKS I CAN USE:
+let p = promise(
+    (resolove,reject) => {
+        if(resolveCondition){
+            resolove("someSuccess");
+        }else{
+            reject("someError");
+        }
+    }
+);
+
+p.then(funcToCallIfResolved).catch(funcToCallIfRejected);
+
+
+
+===========NPM=============
+
+npm install mysql2 express uid express-session session-file-store express-mysql-session

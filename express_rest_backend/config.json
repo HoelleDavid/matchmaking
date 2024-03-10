@@ -1,0 +1,10 @@
+{
+    "AllowOnlySafeMatches":"false",
+    "SafeMatches":["127.0.0.1:5567"],
+
+    "SQLServerIP":"127.0.0.1",
+    "SQLServerPORT":"3306",
+    "SQLServerUser":"root",
+    "SQLServerPassword":"root"
+    
+}

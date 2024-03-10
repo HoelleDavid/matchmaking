@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://pimu11kxirdr"]
+
+[ext_resource type="PackedScene" uid="uid://cfyrc8mx0aw57" path="res://resource/http_request_login.res" id="1_2r0jr"]
+[ext_resource type="PackedScene" uid="uid://cnr1txlabivjp" path="res://resource/util.res" id="1_a2xht"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="util" parent="." instance=ExtResource("1_a2xht")]
+
+[node name="HTTPRequestLogin" parent="." instance=ExtResource("1_2r0jr")]
