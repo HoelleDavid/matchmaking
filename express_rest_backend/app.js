@@ -1,42 +1,13 @@
+require("dotenv").config();
 
 const express 	= require('express');
 const session 	= require('express-session');
-const passport 	= require("passport");
 const routes 	= require("routes");
-
-const MySQLStore = require('express-mysql-session')(session);
 
 const app = module.exports = express();
 
-const {SQLServerUser,SQLServerPassword,SQLServerIP,SQLServerPORT}= require("./globals");
-
-
-const options = {
-	host: SQLServerIP,
-	port: SQLServerPORT,
-	user: SQLServerUser,
-	password: SQLServerPassword,
-	database: 'matchmaking'
-};
-
-const sessionStore = new MySQLStore(options);
-// Optionally use onReady() to get a promise that resolves when store is ready.
-sessionStore.onReady().then(() => {
-	// MySQL session store ready for use.
-	console.log('MySQLStore ready');
-}).catch(error => {
-	// Something went wrong.
-	console.error(error);
-});
-
-
-function errHandler(err,req,res,next) {
-	if (err){
-		res.send(`backend error ${err}`)
-		console.log(err);
-	}
-};
-
+const database = require("./database")
+const passport = require("./passport")
 
 function middleware_pattern(req,res,next) {
 	//CODE
@@ -48,12 +19,29 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}))
 app.use(session({
 	key: 'session_cookie_name',
-	secret: 'session_cookie_secret',
-	store: sessionStore,
+	secret: process.env.expressSessionSecret,
+	store: database.sessionStore,
 	resave: false,
 	saveUninitialized: false
 }));
 
+
+///========ROUTES========
+
+
+///========POST========
+/*
+app.post("/login/",passport.authenticate("local"),(req,res,next) => {
+	//ON VALID AUTH
+});
+
+app.post("/register/",passport.reg(req,res,next) => {
+
+});
+*/
+
+
+///========GET========
 app.get("/register/", (req,res,next) => {
 	res.send("this will be register page !!");
 });
@@ -61,20 +49,41 @@ app.get("/register/", (req,res,next) => {
 app.get("/login/", (req,res,next) => {
 	res.send("this will be login page !!");
 });
+
+
 app.get("/", (req,res,next) => {
-	res.send("root request answer !!");
+	var x = database.sessionStore.query("show collections;")
+	x.then(
+		(a) => 
+			res.send(a)
+	).catch(
+		(err) => next(err)
+	);
 });
 app.get("/testing/", (req,res,next) => {
 	if(!req.session.viewCount){
 		req.session.viewCount = 0;
 	}
 	req.session.viewCount += 1;
+	console.log(req.headers);
+	
 	res.send({svc:req.session.viewCount});
 });
 
+///========ERR HANDLING AND PORT BINDING========
+function errHandler(err,req,res,next) {
+	if (err){
+		res.send(`backend error ${err}`)
+		console.log(err);
+	}
+};
 app.use(errHandler);
 
 app.listen(3000);
+
+
+
+
 /*
 const { connectDatabase,SQLQuery } = require("./database_connector");
 const os = require("os")

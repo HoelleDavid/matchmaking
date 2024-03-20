@@ -8,6 +8,8 @@ GRANT ALL PRIVILEGES ON *.* TO 'root'@'ip_address';
 
 ============JS=============
 
+require("dotenv").config({ path: "./express_rest_backend/.env"});
+
 INSTEAD OF USING CALLBACKS I CAN USE:
 let p = promise(
     (resolove,reject) => {
@@ -26,3 +28,5 @@ p.then(funcToCallIfResolved).catch(funcToCallIfRejected);
 ===========NPM=============
 
 npm install mysql2 express uid express-session session-file-store express-mysql-session
+
+#--npm cache clean --force
