@@ -1,60 +1,83 @@
+const app = require("./app")
+require("dotenv").config();
 const passport 	= require("passport");
 const LocalStrategy = require('passport-local');
-const {sessionStore,connection} = require("./database")
+const {sessionStore,connection,UserModel} = require("./database")
+const crypto = require("crypto")
 
-
-/*
 const passport_options = {
-	usernameField:"user",
+	usernameField:"username",
 	passwordField:"password"
 };
 
-passport.use(new LocalStrategy(
-    (uname , pw, cb) => {
-        User
-    }
-))
 
-
-/*
-///PASSPORT 
-const passportVerifyCallback = (username,password,done) => {
-	User.findOne({username:username}).then(
-		(user) => {
+//Pulls user from DB,
+const verifyCallback = (username,password,done) => {
+	UserModel.findByUsername(username).then(
+		(sqlRes) => {
+			const user = sqlRes[0][0];
+			console.log(user)
 			if (!user) {
+				//User doesnt exist
 				return done(null,false);
 			}
-			if (isValid(password,user.hash,user.salt)){
+			if (isValidHash(password,user.hash,user.salt)){
+				//valid user credentials
 				return done(null,user);
 			}else{
+				//invalid user credentials
 				return done(null,false);
 			}
 		}
 	).catch(
 		(err) => {
+			//forward all errors trough passport to express
 			done(err);
 		}
 	)
 }
-const strategy = new LocalStrategy(passport_options, passportVerifyCallback);
-passport.use(strategy)
+
+
+const generateHashSalt = (password) =>	{
+	var salt = crypto.randomBytes(32).toString("hex");
+	var hash = crypto.pbkdf2Sync(password,salt,
+		Number(process.env.cryptIterationCount),Number(process.env.cryptKeyLength),process.env.cryptDigest
+	).toString("hex");
+	return {salt:salt,hash:hash}
+}
+const isValidHash = (password,hash,salt) => {
+	var verifyHash = crypto.pbkdf2Sync(password,salt,
+		Number(process.env.cryptIterationCount),Number(process.env.cryptKeyLength),process.env.cryptDigest
+	).toString("hex");
+	return hash === verifyHash;
+}
+const auth = (strategy,redirects) => {
+	return passport.authenticate(strategy,redirects)
+};
+
+
+//TODO allow other strats
+passport.use(new LocalStrategy(passport_options,verifyCallback))
+
 passport.serializeUser(
 	(user,done) => {
-		done(null,user);
+		done(null,user.username);
 	}
 );
-passport.deserializeUser(
-	User.findById(userId).then(
+passport.deserializeUser( (username,done) => {
+	UserModel.findByUsername(username).then(
 		(user) => {
 			done(null,user);
 		}
 	).catch(
 		(err) => done(err)
 	)
-);
+});
+
 
 app.use(passport.initialize());
+
+//make express use passport functions (above)
 app.use(passport.session());
 
-
-*/
+module.exports = {generateHashSalt,auth}
