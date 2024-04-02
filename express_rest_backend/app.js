@@ -45,30 +45,43 @@ app.post("/register/", (req,res,next) => {
 app.post("/login/",
 	auth("local"),
 	(req,res,next) => {
-		console.log(req);
+		res.redirect("/");
+	}
+);
+
+
+app.post("/logout/",
+	(req,res,next) => {
+		req.logOut((err) => {
+			if(err){
+				next(err)
+			}
+		});
+		res.redirect("/")
 	}
 );
 
 
 
 
-
-
 //========GET========
-const registerForm = "<a>REGISTER:</a><br><form method='POST' action='/register'> USERNAME: <input type='text' name='username'> <br> PASSWORD: <input type='text' name='password'> <br><input type='submit'> </form>";
+const registerForm = "<a>REGISTER:</a><br><form method='POST' action='/register'> USERNAME: <input type='text' name='username'> <br> PASSWORD: <input type='text' name='password'> <br><input value='SUBMIT' type='submit'> </form>";
 app.get("/register/", (req,res,next) => {
 	res.send(registerForm);
 });
 
-const loginForm = "<a>LOGIN:</a><br><form method='POST' action='/login'> USERNAME: <input type='text' name='username'> <br> PASSWORD: <input type='text' name='password'><br><input type='submit'> </form>";
+const loginForm = "<a>LOGIN:</a><br><form method='POST' action='/login'> USERNAME: <input type='text' name='username'> <br> PASSWORD: <input type='text' name='password'><br><input value='SUBMIT' type='submit'> </form>";
 app.get("/login/",
 	(req,res,next) => {
 		res.send(loginForm);
 	}
 );
 
-app.get("/logout/", (req,res,next) => {
-	res.send("TBD")
+
+//TODO make POST or DELETE according to https://www.passportjs.org/concepts/authentication/logout/
+const logoutForm = "<form method='POST' action='/logout'> <input value='LOGOUT' type='submit'> </form>";
+app.get("/logout", (req,res,next) => {
+	res.send(logoutForm)
 });
 
 app.get("/matchmake/", (req,res,next) => {
@@ -80,20 +93,16 @@ app.get("/matchmake/", (req,res,next) => {
 
 
 app.get("/", (req,res,next) => {
-	var x = database.models.findUserByUname("someuser")
-	console.log(x)
-	res.send(x)
-	
-});
-
-app.get("/testing/", (req,res,next) => {
-	if(!req.session.viewCount){
-		req.session.viewCount = 0;
-	}
-	req.session.viewCount += 1;
-	console.log(req.headers);
-	
-	res.send({svc:req.session.viewCount});
+	res.send(req.user)
+	return;
+	UserModel.findByUsername(req.body.username).then(
+	(x) => {
+		console.log(x);
+		res.send(x)
+	}).catch(
+	(err) => {
+		next(err)
+	});
 });
 
 app.get("/usertable/", (req,res,next) => {

@@ -43,8 +43,12 @@ if(process.env.initializeTables){
 var UserModel = {}
 UserModel.findByUsername = (username) => {
     const q = `SELECT username,hash,salt FROM User WHERE username = '${username}' LIMIT 1;`
-    console.log(q)
-    return connection.promise().query(q);
+    //console.log(q)
+    return connection.promise().query(q).then(
+        (sqlRes) => { return sqlRes[0]}
+	);
+
+    
 }
 
 

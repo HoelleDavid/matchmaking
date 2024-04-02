@@ -14,8 +14,9 @@ const passport_options = {
 //Pulls user from DB,
 const verifyCallback = (username,password,done) => {
 	UserModel.findByUsername(username).then(
-		(sqlRes) => {
-			const user = sqlRes[0][0];
+		(users) => {return users[0]}
+	).then(
+		(user) => {
 			console.log(user)
 			if (!user) {
 				//User doesnt exist
