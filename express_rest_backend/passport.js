@@ -2,7 +2,7 @@ const app = require("./app")
 require("dotenv").config();
 const passport 	= require("passport");
 const LocalStrategy = require('passport-local');
-const {sessionStore,connection,UserModel} = require("./database")
+const {UserModel} = require("./database")
 const crypto = require("crypto")
 
 const passport_options = {
