@@ -11,7 +11,6 @@ const passport_options = {
 };
 
 
-//Pulls user from DB,
 const verifyCallback = (username,password,done) => {
 	UserModel.findByUsername(username).then(
 		(users) => {return users[0]}

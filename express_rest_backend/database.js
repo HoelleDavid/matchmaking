@@ -35,9 +35,6 @@ sessionStore.onReady().then(
 );
 
 
-
-
-
 ///========SQL-Masks========
 
 
@@ -67,19 +64,17 @@ UserPrivilegeModel.createSchema = () => {
     const q = "CREATE TABLE ServerUser(username varchar(255) NOT NULL UNIQUE PRIMARY KEY);"
     return connection.promise().query(q)
 }
-serPrivilegeModel.isServerUser = (username) => {
-    `SELECT * FROM ServerUser WHERE username ='${username}' LIMIT 1;`
+UserPrivilegeModel.isServerUser = (username) => {
+    const q = `SELECT * FROM ServerUser WHERE username ='${username}' LIMIT 1;`
     return connection.promise().query(q).then(
-        (sqlRes) => { return sqlRes[0][0] != undefined}
-	).catch(
-        (err) => {return false;}
+        (sqlRes) => sqlRes[0].length !== 0
     );
 
     
 }
 UserPrivilegeModel.setServerUser = (username) => {
     const q = `INSERT INTO ServerUser(username) VALUES ('${username}');`
-    return connection.promise().query(q)
+    return connection.promise().query(q).catch((err) => {})
 };
 UserPrivilegeModel.revokeServerUser = (username) => {
     const q = `DELETE FROM ServerUser where username=('${username}');`

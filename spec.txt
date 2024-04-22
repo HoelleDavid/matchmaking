@@ -1,0 +1,107 @@
+Server States
+
+	S0 Idle
+	S1 PlayersLoading
+	S2 MatchInProgress
+
+
+
+Client States
+
+	C0 Idle
+	C1 Matching
+	C2 MatchConfirmed
+	C3 InMatch
+
+
+C0->C1: 		HTTP Request
+C1->C2 and S0->S1: 	HTTP Response MatchFound(MatchConfig) instead of LookingForMatch
+			Socket Connect and send Auth
+C2->C3 and S1->S2:	Socket MatchStarting
+C3->C0 and S2->S0:	HTTP Response MatchComplete(MatchData)
+			Socket Close
+
+
+
+
+
+
+{ "type":"MatchConfig",					#Match metadata
+  "address":String,
+  "matchId":String,
+  "factions":[String],
+  "nicknames":[String],
+	...
+}
+
+
+REST CLI - MMS
+
+{ "type":"Login", "username":String, "password":String }
+{ "type":"Register", "username":String, "password":String, "serverUser":String }
+
+{ "type":"LookForMatch", "modes":[String] } 		#Client req join queue
+{ "type":"RevokeFromMatch" } 				#Client req exit queue
+{ "type":"LookingForMatch" }				#Server res confirm player still in queue
+{ "type":"MatchFound", ?"matchConfig":Object }		#Server res 
+{ "type":"AcceptMatch" }				#Client req confirm MatchFound
+{ "type":"DeclineMatch" }				#Client req dont confirm MatchFound
+{ "type":"MatchConfirmed", "matchConfig":Object }	#Server res if all Players AcceptMatch
+
+
+
+
+Socket	CLI - MS
+
+{ "type":"Authenticate", } 				#Client req 
+{ "type":"LoadMatchComplete" } 				#Client req 
+{ "type":"MatchStarting" }				#Server res if all Players LoadMatchComplete or Timer runs out
+... other game action/state specific
+
+
+
+REST MMS - MS
+
+{ "type":"OfferMatchServer", "address":[String], "expires":String } 		#MS req offer MS
+{ "type":"RevokeMatchServer", ?"address":[String] }				#MS req revoke (?all)MS
+
+{ "type":"PrepareMatch", "matchConfig":Object, "clientCookies":[Object] }	#MMS res accept offered MS
+{ "type":"MatchComplete", "MatchData":Object }					#MS req to integrate MatchData into MMS
+
+
+
+
+{ "type":"", "": }
+
+
+
+
+-login/register MMS
+-login/register CLI/MS
+-MS offer match
+-CLI find match
+-MMS match tracking logic and session disconnects
+-MS perform and report match
+
+
+
+cookie update during match -> MS needs to be notified
+(inside GET /provide)
+
+
+/user
+MMSA0: 	register new user
+MMSA1:	login existing user
+MMSA2:	logout session
+MMSA3:	delete the user the session belongs to
+MMSA4:	get user data
+
+/matchmaking
+MMSB0:	join MM queue
+MMSB1:	check MM queue
+MMSB2:	leave MM queue
+
+MMSB4:	provide MM server
+MMSB5:	check MM server
+MMSB6:	revoke MM server
+MMSB7:	report back match outcome

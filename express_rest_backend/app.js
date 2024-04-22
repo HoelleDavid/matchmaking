@@ -34,13 +34,9 @@ app.use("/matchmaking/",mm_router)
 function errHandler(err,req,res,next) { // TODO
 	if (err){
 		const x = `backend error in err handler \n ${err}`
-		res.send(x)
-		console.log(x);
+		console.warn(x);
 	}
 };
 app.use(errHandler);
 
 app.listen(3000);
-
-
-
