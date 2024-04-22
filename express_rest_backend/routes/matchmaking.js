@@ -1,4 +1,5 @@
 const express = require("express")
+const timeout 	= require("connect-timeout")
 const router = express.Router()
 
 const {UserPrivilegeModel} = require("../database");
@@ -29,7 +30,7 @@ const assertUserServerPrivileged = (req,res) => {
 }
 
 
-//========TMP========
+/*========TMP========
 router.get("/enqueue/",
 	(req,res,next) => {
 		if(assertUserAuth(req,res)){
@@ -47,7 +48,7 @@ router.get("/provide/",
 		}
 	}
 );
-
+*/
 //========Route endpoints========
 //MMSB0
 router.post("/enqueue/",
@@ -58,7 +59,7 @@ router.post("/enqueue/",
 //MMSB1
 router.get("/enqueue/",
 	(req,res,next) => {
-		
+
 	}
 );
 //MMSB2

@@ -36,3 +36,5 @@ offset_right = 348.0
 offset_bottom = 457.0
 
 [node name="ServerPool" parent="." instance=ExtResource("6_oad04")]
+
+[node name="HTTPSession" type="Node" parent="."]

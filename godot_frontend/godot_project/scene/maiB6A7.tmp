@@ -4,6 +4,6 @@
 
 [node name="Node2D" type="Node2D"]
 
-[node name="HTTPRequest" type="HTTPRequest" parent="."]
-
 [node name="HTTPSession" parent="." instance=ExtResource("1_glefl")]
+
+[node name="HTTPRequest" type="HTTPRequest" parent="."]

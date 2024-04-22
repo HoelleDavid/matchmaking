@@ -3,6 +3,7 @@ require("dotenv").config();
 const express 	= require('express');
 const session 	= require('express-session');
 const routes 	= require("routes");
+
 ///========INIT DATABASE========
 const database = {sessionStore,connection,UserModel,UserPrivilegeModel} = require("./database");
 ///========INIT EXPRESS========

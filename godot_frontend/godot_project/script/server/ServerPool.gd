@@ -3,7 +3,6 @@ extends Node
 const SERVER_LIMIT = 16
 const PEER_LIMIT = SERVER_LIMIT*4
 
-const IP = "127.0.0.1"
 
 var servers = []
 

@@ -36,7 +36,7 @@ router.post("/register/", (req,res,next) => {
 router.post("/login/",
 	auth("local"),
 	(req,res,next) => {
-		res.redirect("/");
+		next()		
 	}
 );
 
@@ -48,18 +48,14 @@ router.post("/logout/",
 				next(err)
 			}
 		});
-		res.redirect("/")
+		res.redirect("/login/")
 	}
 );
 
 //MMSA3
 router.delete("/",
 	(req,res,next) => {
-		if (!req.isAuthenticated()){
-			res.status(401);
-			res.send("you are not logged in");
-			res.redirect("/user/login")
-		}else{
+		if (assertUserAuth(req,res)){
 			UserModel.delete(req.session.passport.user);
 			next();
 		}
