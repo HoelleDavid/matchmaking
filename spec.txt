@@ -1,4 +1,4 @@
-Server States
+MServer States
 
 	S0 Idle
 	S1 PlayersLoading
@@ -14,12 +14,12 @@ Client States
 	C3 InMatch
 
 
-C0->C1: 		HTTP Request
+C0->C1: 		    HTTP Request
 C1->C2 and S0->S1: 	HTTP Response MatchFound(MatchConfig) instead of LookingForMatch
-			Socket Connect and send Auth
+			        Socket Connect and send Auth
 C2->C3 and S1->S2:	Socket MatchStarting
 C3->C0 and S2->S0:	HTTP Response MatchComplete(MatchData)
-			Socket Close
+			        Socket Close
 
 
 
@@ -64,7 +64,6 @@ REST MMS - MS
 
 { "type":"OfferMatchServer", "address":[String], "expires":String } 		#MS req offer MS
 { "type":"RevokeMatchServer", ?"address":[String] }				#MS req revoke (?all)MS
-
 { "type":"PrepareMatch", "matchConfig":Object, "clientCookies":[Object] }	#MMS res accept offered MS
 { "type":"MatchComplete", "MatchData":Object }					#MS req to integrate MatchData into MMS
 
@@ -78,15 +77,12 @@ REST MMS - MS
 
 -login/register MMS
 -login/register CLI/MS
--MS offer match
+-MS provide match
 -CLI find match
--MMS match tracking logic and session disconnects
+-MMS match tracking logic
 -MS perform and report match
+-MMS session disconnects
 
-
-
-cookie update during match -> MS needs to be notified
-(inside GET /provide)
 
 
 /user
@@ -100,8 +96,69 @@ MMSA4:	get user data
 MMSB0:	join MM queue
 MMSB1:	check MM queue
 MMSB2:	leave MM queue
+MMSB3:  accept check
 
 MMSB4:	provide MM server
 MMSB5:	check MM server
 MMSB6:	revoke MM server
 MMSB7:	report back match outcome
+
+
+
+
+
+
+
+
+Abstract
+    Goal:   
+        - Thesis: Most (UDP-based) multiplayer games benefit from a REST-API to handle user authentification, matchmaking and user persistent data.
+        - Implement such an API.
+        - Discuss the vulnlerabilities and alternatives
+
+
+    Challenges:
+        authentification & security:
+            - matchmaking server users and privileges
+            - server architecture & match server
+    Implementation:
+        - mysql / passport / express interaction
+        - user verification with hash & salt
+            - on the matchmaking server
+            - when assigning match servers  
+        - matchmaking strategy (which player to assign to which server) on the ELO example
+    Testing:
+        - register, login and logout
+        - matchmaking
+	- elo system
+
+    Discussion
+        - porting to game distribution services (passport-steam f.e.)
+
+
+Abstract:
+Most multiplayer games rely on a UDP connection to optimize the speed at wich Players obtain updates in the state of the game.
+The nature of UDP connections does not allow for certain delivery of packets of data, which is the main benefit of TCP.
+Naturally there is a ussage for both in the development of online multiplayer games.
+Managing players aswell as corresponding player data and important actions depends to some extent the implementation of a TCP based API.
+Nodejs provides numerous libraries to help develop JavaScript applications. More specifically express, a library to handle REST-API calls, passport to authenticate users and mysql2 to easily mask MYSQL database queries.
+Combined those allow for a simplified implementation of some nessecary components of multiplayer games, like identifying players, grouping players into matches (matchmaking) and handling player persistent data.
+The goal of this paper is to discuss the challenges in development and ussage of a matchmaking server.
+
+Thesis: Most (UDP-based) multiplayer games benefit from a REST-API to handle player and server authentification, matchmaking and persistent data.
+
+
+
+
+
+Concepts and acronyms:
+user:       an entity that can be verified by the matchmaking server.
+player:     an entity that can participate in matches.
+match:      an instance of the game players want to participate in. Run on the MS.
+matchmaking:     the process of assigning players to matches
+matchmaking server (MMS):      the application responisble for:
+    - user authentification
+    - matchmaking
+match server (MS):   the application responsible for:
+    - allowing players to play the game
+    - report important events in the game to the MMS.
