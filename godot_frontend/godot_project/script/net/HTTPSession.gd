@@ -1,31 +1,31 @@
 extends Node
 
-
 @onready var http = $HTTPRequest
-
-var mms_url : String = "http://127.0.0.1:3000/"
 @onready var session_headers = ["Content-Type: application/json"]
 
 var _response = null
 
+
 #masks $HTTPRequest.request, puts response in _response
-func request(url,method,body=""):
+func request_async(url,method,body=""):
 	assert(_response == null)
 	http.request_completed.connect(
 		func (res_result, res_response_code, res_headers, res_body) : _response={"result":res_result, "response_code":res_response_code, "headers":res_headers, "body":res_body}
 	)
-	print(session_headers)
 	http.request(url,session_headers,method,body)
-func has_response():
+	await _await_response()
+	return _pop_response()
+
+func _has_response():
 	return _response != null;
-func pop_response():
+func _pop_response():
 	var tmp_res = _response
 	_response = null
 	return tmp_res
 	
 #waits until _response is filled
-func await_response(interval = .1):
-	while !has_response():
+func _await_response(interval = .1):
+	while !_has_response():
 		await get_tree().create_timer(interval).timeout
 
 func has_session():
@@ -74,49 +74,7 @@ func load_headers(path):
 	printerr("path is no file")
 	return false
 	
-
-#requests to mms
-
-#set-headers after a login call, else warn and dont modify session_headers
-func login(username,password):
-	var body = JSON.stringify({"username":username, "password":password})
-	request(mms_url+"user/login/",HTTPClient.METHOD_POST,body)
-	await await_response()
-	var res = pop_response()
-	if res["response_code"] != 200:
-		push_warning("request returned response code %s\n%s" % [res["response_code"],res["body"].get_string_from_utf8()])
-		pass
-	session_headers += _get_set_headers(res["headers"])
+func update_cookie_from_header(header):
+	session_headers += _get_set_headers(header)
 	_expire_cookies()
-	
-func register(username,password):
-	var body = JSON.stringify({"username":username, "password":password})
-	request(mms_url+"user/",HTTPClient.METHOD_PUT,body)
-	await await_response()
-	var  res = pop_response()
-	if res["response_code"] != 200:
-		push_warning("request returned response code %s\n%s" % [res["response_code"],res["body"].get_string_from_utf8()])
-		pass
 
-func logout():
-	request(mms_url+"user/logout/",HTTPClient.METHOD_POST)
-	await await_response()
-	var  res = pop_response()
-	if res["response_code"] != 200:
-		push_warning("request returned response code %s\n%s" % [res["response_code"],res["body"].get_string_from_utf8()])
-		pass
-	session_headers += _get_set_headers(res["headers"])
-	print(res["headers"])
-	_expire_cookies()
-	
-
-
-	
-func _ready():
-	pass
-	#request(mms_url+"user/",HTTPClient.METHOD_GET)
-	#await await_response()
-	
-	#print(_response["body"].get_string_from_utf8())
-	
-	#callv("funcId",arr)
