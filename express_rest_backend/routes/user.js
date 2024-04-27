@@ -1,23 +1,30 @@
 const express = require("express");
-const { UserPrivilegeModel } = require("../database");
+const user_controller = {assertUserAuth,assertHostPrivilege} = require("../controllers/user")
 const router = express.Router()
 
-const assertUserAuth = (req,res) => {
-	if (!req.isAuthenticated()){
-		res.status(401);
-		res.send("you are not logged in");
-		res.redirect("/user/login")
-		return false;
-	}
-	return true;
-}
+const Ajv = require('ajv');
+const ajv = new Ajv();
+const user_auth_data_schema = require("../../schema/user_auth_data.json")
+
+
 
 //========Route endpoints========
 //MMSA0
 router.post("/register/", (req,res,next) => {
+	//on invalid body send the schema with 422 Unprocessable Content
+	console.log(req.body)
+	console.log(user_auth_data_schema)
+	if(!ajv.validate(user_auth_data_schema,req.body)){
+		res.code = 422
+		res.send(`userdata must follow 	${user_auth_data_schema}`)
+		next()
+	}
+
+	//add the user to the database
 	const hashSalt = generateHashSalt(req.body.password);
 	UserModel.register(req.body.username,hashSalt.hash,hashSalt.salt).then(
 		(val) => {
+			res.status(201)
 			res.send("sucessful register go to <a href='/user/login/'> LOGIN </a>");
 		}
 	).catch(
@@ -62,27 +69,16 @@ router.delete("/",
 	}
 );
 
+
 //MMSA4
 router.get("/",
 	(req,res,next) => {
-		if (assertUserAuth(req,res)){
-			var userdata = {
-				username:req.session.passport.user,
-				isServerUser:false,
-			}
-			const username = req.session.passport.user
-			udatapromises = [
-				UserPrivilegeModel.isServerUser(userdata.username).then(
-					(isServerUser) => {userdata.isServerUser = isServerUser}
-				)
-			]
-
-			Promise.all(udatapromises).then(
-				() => {res.send(userdata)}
-			).catch(console.log)
-		}
+			res.send(req.userdata)
 	}
 );
+
+
+
 
 //========HTMLs========
 const registerForm = "<a>REGISTER:</a><br><form method='POST' action='/user/register'> USERNAME: <input type='text' name='username'> <br> PASSWORD: <input type='password' name='password'><br> <input value='SUBMIT' type='submit'> </form>";

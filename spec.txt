@@ -85,23 +85,7 @@ REST MMS - MS
 
 
 
-/user
-MMSA0: 	register new user
-MMSA1:	login existing user
-MMSA2:	logout session
-MMSA3:	delete the user the session belongs to
-MMSA4:	get user data
 
-/matchmaking
-MMSB0:	join MM queue
-MMSB1:	check MM queue
-MMSB2:	leave MM queue
-MMSB3:  accept check
-
-MMSB4:	provide MM server
-MMSB5:	check MM server
-MMSB6:	revoke MM server
-MMSB7:	report back match outcome
 
 
 
@@ -136,29 +120,6 @@ Abstract
         - porting to game distribution services (passport-steam f.e.)
 
 
-Abstract:
-Most multiplayer games rely on a UDP connection to optimize the speed at wich Players obtain updates in the state of the game.
-The nature of UDP connections does not allow for certain delivery of packets of data, which is the main benefit of TCP.
-Naturally there is a ussage for both in the development of online multiplayer games.
-Managing players aswell as corresponding player data and important actions depends to some extent the implementation of a TCP based API.
-Nodejs provides numerous libraries to help develop JavaScript applications. More specifically express, a library to handle REST-API calls, passport to authenticate users and mysql2 to easily mask MYSQL database queries.
-Combined those allow for a simplified implementation of some nessecary components of multiplayer games, like identifying players, grouping players into matches (matchmaking) and handling player persistent data.
-The goal of this paper is to discuss the challenges in development and ussage of a matchmaking server.
-
-Thesis: Most (UDP-based) multiplayer games benefit from a REST-API to handle player and server authentification, matchmaking and persistent data.
 
 
 
-
-
-Concepts and acronyms:
-user:       an entity that can be verified by the matchmaking server.
-player:     an entity that can participate in matches.
-match:      an instance of the game players want to participate in. Run on the MS.
-matchmaking:     the process of assigning players to matches
-matchmaking server (MMS):      the application responisble for:
-    - user authentification
-    - matchmaking
-match server (MS):   the application responsible for:
-    - allowing players to play the game
-    - report important events in the game to the MMS.

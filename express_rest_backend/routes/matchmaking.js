@@ -2,101 +2,69 @@ const express = require("express")
 const timeout 	= require("connect-timeout")
 const router = express.Router()
 
-const {UserPrivilegeModel} = require("../database");
+//to check requests before making controller calls
+const Ajv = require('ajv');
+const ajv = new Ajv();
 
-const assertUserAuth = (req,res) => {
-	if (!req.isAuthenticated()){
-		res.status(401);
-		res.send("you are not logged in");
-		res.redirect("/user/login")
-		return false;
-	}
-	return true;
-}
+const user_controller = { assertUserAuth, assertHostPrivilege } = require("../controllers/user");
+const mm_controller = {onProvideHost,onRevokeHost,onPollHost,onJoinQueue,onExitQueue,onPollQueue} = require("../controllers/matchmaking")
 
-const assertUserServerPrivileged = (req,res) => {
-	if(assertUserAuth(req,res)){
-		const t = UserPrivilegeModel.isServerUser(req.session.passport.user).then(
-			(isServerUser) => {return isServerUser}
-		).catch(
-			(err) =>{
-				res.status(401);
-				res.send("you are no server user");
-				return false
-			}
-		)
-
-	}
-}
-
-
-/*========TMP========
-router.get("/enqueue/",
-	(req,res,next) => {
-		if(assertUserAuth(req,res)){
-			UserPrivilegeModel.revokeServerUser(req.session.passport.user).then().catch();
-			res.send("revoke server user")
-		}
-	}
-);
-
-router.get("/provide/",
-	(req,res,next) =>{
-		if(assertUserAuth(req,res)){
-			UserPrivilegeModel.setServerUser(req.session.passport.user).then().catch();
-			res.send("set server user")
-		}
-	}
-);
-*/
 //========Route endpoints========
-//MMSB0
-router.post("/enqueue/",
+//MMSB0 
+router.post("/queue/",
+	assertUserAuth,
 	(req,res,next) => {
 		
 	}
 );
 //MMSB1
-router.get("/enqueue/",
+router.get("/queue/",
+	assertUserAuth,
 	(req,res,next) => {
 
 	}
 );
 //MMSB2
-router.delete("/enqueue/",
+router.delete("/queue/",
+	assertUserAuth,
 	(req,res,next) => {
 		
 	}
 );
 
 //MMSB3
-router.put("/enqueue/",
+router.put("/queue/",
+	assertUserAuth,
 	(req,res,next) => {
 		
 	}
 );
 
 //MMSB4
-router.post("/provide/",
+router.post("/host/",
+	assertHostPrivilege,
 	(req,res,next) => {
 		
 	}
 );
 //MMSB5
-router.get("/provide/",
+router.get("/host/",
+	assertHostPrivilege,
 	(req,res,next) => {
 	
 	}
 );
 //MMSB6
-router.delete("/provide/",
+router.delete("/host/",
+	assertHostPrivilege,
 	(req,res,next) => {
 		
 	}
 );
 
 //MMSB7
-router.post("/report/",
+router.put("/host/",
+	assertHostPrivilege,
 	(req,res,next) => {
 		
 	}

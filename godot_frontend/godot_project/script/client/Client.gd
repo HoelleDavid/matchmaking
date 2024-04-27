@@ -11,6 +11,7 @@ var _peer = WebRTCMultiplayerPeer.new();
 
 func _ready():
 	assert(username != "")
+	
 	if (_http.has_session()):
 		pass
 

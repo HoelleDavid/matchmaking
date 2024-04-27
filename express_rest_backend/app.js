@@ -1,14 +1,15 @@
 require("dotenv").config();
-
 const express 	= require('express');
 const session 	= require('express-session');
 const routes 	= require("routes");
 
+const args = process.argv.slice(1)
+
+
 ///========INIT DATABASE========
-const database = {sessionStore,connection,UserModel,UserPrivilegeModel} = require("./database");
+const database = {sessionStore,UserModel,UserPrivilegeModel} = require("./controllers/database");
 ///========INIT EXPRESS========
 const app = module.exports = express();
-
 
 app.use(express.json());
 app.use(express.urlencoded({extended:true}))
@@ -20,8 +21,12 @@ app.use(session({
 	saveUninitialized: false
 }));
 
-///========INIT PASSPORT========
-const passport = {generateHashSalt,auth} = require("./passport")
+//========INIT PASSPORT========
+const passport = {generateHashSalt,auth} = require("./controllers/passport")
+// 	//========INIT USER========
+//	const user_controller = require("./controllers/user")
+///========INIT MATCHMAKING========
+const matchmaking = require("./controllers/matchmaking")
 
 
 ///========ROUTES========

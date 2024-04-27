@@ -1,0 +1,17 @@
+{
+    "title":"HostData",
+    "type":"object",
+    "required":[],
+    "properties":{
+        "provide_servers":[{
+            "title":"Host",
+            "type":"object",
+            "required": ["addresss"],
+            
+            "properties":{
+                "addresss":"string",
+                "max_player_count":"integer"
+            }
+        }]
+    }
+}

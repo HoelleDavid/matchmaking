@@ -27,7 +27,7 @@ p.then(funcToCallIfResolved).catch(funcToCallIfRejected);
 
 ===========NPM=============
 
-npm install mysql2 express uid express-session express-mysql-session passport crypto connect-timeout
+npm install mysql2 express uid express-session express-mysql-session passport crypto connect-timeout ajv
 
 #--npm cache clean --force
 
