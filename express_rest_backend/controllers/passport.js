@@ -16,7 +16,6 @@ const verifyCallback = (username,password,done) => {
 		(users) => {return users[0]}
 	).then(
 		(user) => {
-			console.log(user)
 			if (!user) {
 				//User doesnt exist
 				return done(null,false);

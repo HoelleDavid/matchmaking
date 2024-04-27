@@ -29,6 +29,7 @@ const assertUserAuth = (req,res,next) =>{
         res.send("you are not logged in. consider logging in at /user/login/ via POST")
         next()
     }
+	next()
 }
 const assertHostPrivilege = (req,res,next) =>{
     assertUserAuth(req,res,next)

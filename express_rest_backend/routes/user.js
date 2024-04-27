@@ -1,16 +1,16 @@
 const express = require("express");
-const user_controller = {assertUserAuth,assertHostPrivilege} = require("../controllers/user")
 const router = express.Router()
 
 const Ajv = require('ajv');
 const ajv = new Ajv();
-const user_auth_data_schema = require("../../schema/user_auth_data.json")
+const user_auth_data_schema = require("../../schema/user_auth_data.json");
+const { assertUserAuth } = require("../controllers/user");
 
 
 
 //========Route endpoints========
-//MMSA0
-router.post("/register/", (req,res,next) => {
+//MMSA0 Register
+router.put("/", (req,res,next) => {
 	//on invalid body send the schema with 422 Unprocessable Content
 	console.log(req.body)
 	console.log(user_auth_data_schema)
@@ -18,6 +18,7 @@ router.post("/register/", (req,res,next) => {
 		res.code = 422
 		res.send(`userdata must follow 	${user_auth_data_schema}`)
 		next()
+		return
 	}
 
 	//add the user to the database
@@ -30,7 +31,9 @@ router.post("/register/", (req,res,next) => {
 	).catch(
 		(err) => {
 			if(err.code === "ER_DUP_ENTRY"){
+				res.status(423)
 				res.send("username already taken")
+				next()
 			}else{
 				next(err)
 			}
@@ -39,41 +42,43 @@ router.post("/register/", (req,res,next) => {
 
 });
 
-//MMSA1
+//MMSA1 Login
 router.post("/login/",
 	auth("local"),
 	(req,res,next) => {
+		res.send("success")
 		next()		
 	}
 );
 
-//MMSA2
+//MMSA2 Logout
 router.post("/logout/",
+	assertUserAuth,
 	(req,res,next) => {
-		req.logOut((err) => {
-			if(err){
-				next(err)
-			}
+		req.logout((err) => {
+			if (err) { return next(err); }
+			res.send("logged out");
 		});
-		res.redirect("/login/")
+		
 	}
 );
 
 //MMSA3
 router.delete("/",
+	assertUserAuth,
 	(req,res,next) => {
-		if (assertUserAuth(req,res)){
-			UserModel.delete(req.session.passport.user);
-			next();
-		}
+		UserModel.delete(req.session.passport.user);
+		next();
 	}
 );
 
 
 //MMSA4
 router.get("/",
+assertUserAuth,
 	(req,res,next) => {
-			res.send(req.userdata)
+		res.status(200)
+		res.send(req.userdata)
 	}
 );
 
@@ -81,7 +86,7 @@ router.get("/",
 
 
 //========HTMLs========
-const registerForm = "<a>REGISTER:</a><br><form method='POST' action='/user/register'> USERNAME: <input type='text' name='username'> <br> PASSWORD: <input type='password' name='password'><br> <input value='SUBMIT' type='submit'> </form>";
+const registerForm = "<a>REGISTER:</a><br><form method='PUT' action='/user/'> USERNAME: <input type='text' name='username'> <br> PASSWORD: <input type='password' name='password'><br> <input value='SUBMIT' type='submit'> </form>";
 router.get("/register/", (req,res,next) => {
 	res.send(registerForm);
 });

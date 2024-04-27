@@ -23,8 +23,6 @@ app.use(session({
 
 //========INIT PASSPORT========
 const passport = {generateHashSalt,auth} = require("./controllers/passport")
-// 	//========INIT USER========
-//	const user_controller = require("./controllers/user")
 ///========INIT MATCHMAKING========
 const matchmaking = require("./controllers/matchmaking")
 
@@ -41,6 +39,8 @@ function errHandler(err,req,res,next) { // TODO
 	if (err){
 		const x = `backend error in err handler \n ${err}`
 		console.warn(x);
+		res.status(500)
+		res.send("try again")
 	}
 };
 app.use(errHandler);
