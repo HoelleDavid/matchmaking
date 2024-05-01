@@ -1,16 +1,20 @@
 {
     "title":"HostData",
     "type":"object",
-    "required":[],
+    "required":["provide_servers"],
     "properties":{
         "provide_servers":[{
             "title":"Host",
             "type":"object",
-            "required": ["addresss"],
+            "required": ["address","port"],
             
             "properties":{
-                "addresss":"string",
-                "max_player_count":"integer"
+                "address":"string",
+                "port":"integer",
+                "max_player_count":"integer",
+                "locale":"string",
+                "modes":["string"],
+                "match_id":"string"
             }
         }]
     }

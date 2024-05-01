@@ -15,6 +15,9 @@ const data = {}
 
 const onProvideHost = (username,host_data) => {
     console.log(`provide host call, username=${username}, host_data = ${host_data}`);
+    return new Promise((res,rej) => {
+
+    });
 }
 const onRevokeHost = (username,host_data = null) => {
     console.log(`revoke host call, username=${username}, host_data = ${host_data}`);
@@ -33,4 +36,7 @@ const onExitQueue = (username,queue_data = null) => {
 const onPollQueue = (username) => {
     console.log(`poll queue call`);
 }
-module.exports = {onProvideHost,onRevokeHost,onPollHost,onJoinQueue,onExitQueue,onPollQueue}
+const onAcceptQueue = (username) => {
+    console.log(`accept queue call`);
+}
+module.exports = {onProvideHost,onRevokeHost,onPollHost,onJoinQueue,onExitQueue,onPollQueue,onAcceptQueue ,/*REMOVE*/data/*REMOVE*/}

@@ -1,16 +1,25 @@
+class_name register_field
 extends Control
 
-
+signal register_data
+@onready var globals = get_node("/root/globals")
 func _onBtn():
-	if $ReferenceRect/PassField.text != $ReferenceRect/PassField2.text:
-		print("invalid login data")
 	var data = {
 		"user":$ReferenceRect/NameField.text,
-		"password":$ReferenceRect/PassField.text
+		"password":$ReferenceRect/PassField.text,
+		"password_check" : $ReferenceRect/PassField2.text
 	}
-	print("trying to register %s" % data)
-	#TODO
+	if _matches(data):
+		data.erase("password_check")
+		globals.on_register($ReferenceRect/NameField.text,$ReferenceRect/PassField.text)
+		print("trying to register in %s" % data)
+
+
+func _matches(data):
+	#TODO check required format
+	return data["password"] == data["password_check"]
 
 func _ready():
 	$ReferenceRect/PassField.secret = true # hide password
+	$ReferenceRect/PassField2.secret = true
 	$ReferenceRect/ConfirmBtn.pressed.connect(_onBtn)

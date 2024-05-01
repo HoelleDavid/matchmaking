@@ -1,14 +1,10 @@
 {
     "title":"QueueData",
     "type":"object",
-
-    "queue_identifier":{
-        "title":"Host",
-        "type":"object",
-        "required": ["addresss"],
-
-        "addresss":"string",
-        "max_player_count":"Integer"
-        
+    "required":[],
+    "properties":{
+        "modes": ["string"],
+        "locale":"string",
+        "found_match":"bool"
     }
 }

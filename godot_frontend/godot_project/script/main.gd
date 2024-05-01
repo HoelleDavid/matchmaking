@@ -5,8 +5,9 @@ extends Node2D
 
 
 func _ready():
-	_client.username = "asd"
-	_client.password = "asd"
+	var globals = get_node("/root/globals")
+
+	
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
