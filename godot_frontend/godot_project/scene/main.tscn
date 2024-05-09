@@ -10,5 +10,6 @@ script = ExtResource("1_wnls2")
 [node name="Client" parent="." instance=ExtResource("3_lncdq")]
 
 [node name="MainMenu" parent="." instance=ExtResource("2_1fjii")]
+visible = false
 offset_right = 0.0
 offset_bottom = 0.0

@@ -6,9 +6,10 @@ extends Node2D
 
 func _ready():
 	var globals = get_node("/root/globals")
-
+	var x = await _client.login("user_c2436","user_c2436")
+	print(x["response_code"])
+	x = await _client.look_for_match()
+	print(x["response_code"])
 	
-	
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass

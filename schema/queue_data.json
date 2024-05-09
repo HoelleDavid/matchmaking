@@ -3,8 +3,8 @@
     "type":"object",
     "required":[],
     "properties":{
-        "modes": ["string"],
-        "locale":"string",
-        "found_match":"bool"
+        "modes": {"type":"array"},
+        "locale":{"type":"string"},
+        "found_match":{"type":"boolean"}
     }
 }

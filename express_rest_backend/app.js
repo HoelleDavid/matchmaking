@@ -1,9 +1,11 @@
 require("dotenv").config();
+
 const express 	= require('express');
 const session 	= require('express-session');
 const routes 	= require("routes");
 
 const args = process.argv.slice(1)
+
 
 
 ///========INIT DATABASE========
@@ -20,29 +22,43 @@ app.use(session({
 	resave: false,
 	saveUninitialized: false
 }));
-
+////========INIT ASSERTIONS======
+//const assetions = require("./controllers/assertions")
 //========INIT PASSPORT========
-const passport = {generateHashSalt,auth} = require("./controllers/passport")
-///========INIT MATCHMAKING========
-const matchmaking = require("./controllers/matchmaking")
-
-
+const passport = {generateHashSalt,auth} = require("./controllers/passport-local")
 ///========ROUTES========
 const user_router = require("./routes/user")
 app.use("/user/",user_router)
 const mm_router = require("./routes/matchmaking")
 app.use("/matchmaking/",mm_router)
-
-
 ///========ERR HANDLING AND PORT BINDING========
-function errHandler(err,req,res,next) { // TODO
+function errHandler(err,req,res,next) { 
 	if (err){
-		const x = `backend error in err handler \n ${err}`
-		console.warn(x);
-		res.status(500)
-		res.send("try again")
+		console.log(err)
+		switch(err.name){
+			case "Unauthorized":
+				res.status(401).send(`Unauthorized:\n ${err.message}`)
+				break
+			case "Forbidden":
+				res.status(403).send(`Forbidden:\n ${err.message}`)
+				break
+			case "UnprocessableContent":
+				res.status(422).send(`UnprocessableContent:\n ${err.message}`)
+				break
+			case "Locked":
+				res.status(423).send(`Locked:\n ${err.message}`)
+				break
+
+			//this error is fatal for the end user and should not happen
+			//hopefully the closest thing to the api crashing post init
+			default:
+				res.status(500).send(`unhandled backend error:\n ${err.message}`)
+				console.warn(`unhandled error:\n ${err}`)
+		}
 	}
 };
+
+
 app.use(errHandler);
 
 app.listen(3000);
