@@ -1,19 +1,16 @@
 extends Node
-
+class_name mms_client
 @onready var _http = $HTTPSession
 var _peer = WebRTCMultiplayerPeer.new();
 
 var mms_url : String = "http://127.0.0.1:3000/"
 
-var _state = ""
-func get_state():
-	return _state
+func has_mms_session():
+	return _http.has_session()
+func is_awaiting_response():
+	return _http.is_awaiting_response()
 	
-func deserialize_session(username):
-	if _http.load_headers("user://%s.httpsesion"%username):
-		_state = "idle"
-
-
+	
 #========MMS API CALLS========================================================
 # /USER/
 func register(username,password):
@@ -124,20 +121,4 @@ func report_hosted_match(matchdata):
 	if  res["response_code"] != 201:
 		push_warning("THING returned response code %s:\n%s\n\n" % [res["response_code"],res["body"].get_string_from_utf8()])
 	return res
-
-
-
-
-
-#======== NODE BEHAVIOR =================================
-func _process(delta):
-	match (_state):
-		"idle":
-			pass
-		"matching":
-			pass
-		"match_conformed":
-			pass
-		"in_match":
-			pass
 

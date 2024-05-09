@@ -4,7 +4,9 @@ extends Node
 @onready var session_headers = ["Content-Type: application/json"]
 
 var _response = null
-
+var _is_processing_response = false
+func is_awaiting_response():
+	return _is_processing_response
 
 #masks $HTTPRequest.request, puts response in _response
 func request_async(url,method,body=""):
@@ -12,6 +14,7 @@ func request_async(url,method,body=""):
 	http.request_completed.connect(
 		func (res_result, res_response_code, res_headers, res_body) : _response={"result":res_result, "response_code":res_response_code, "headers":res_headers, "body":res_body}
 	)
+	_is_processing_response = true
 	http.request(url,session_headers,method,body)
 	await _await_response()
 	return _pop_response()
@@ -21,6 +24,7 @@ func _has_response():
 func _pop_response():
 	var tmp_res = _response
 	_response = null
+	_is_processing_response = false
 	return tmp_res
 	
 #waits until _response is filled
