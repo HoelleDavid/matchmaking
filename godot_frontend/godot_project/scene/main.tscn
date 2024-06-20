@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://qsjwmyc7vnwu"]
+[gd_scene load_steps=3 format=3 uid="uid://qsjwmyc7vnwu"]
 
 [ext_resource type="Script" path="res://scene/main.gd" id="1_wnls2"]
-[ext_resource type="PackedScene" uid="uid://ba3m7itsqusd" path="res://resource/net/mms_client.res" id="2_bu1yt"]
-[ext_resource type="PackedScene" uid="uid://c5joqig7ddhy" path="res://resource/match_client/match_client.res" id="3_tb6bb"]
+[ext_resource type="PackedScene" uid="uid://ba3m7itsqusd" path="res://resource/net/mms_connection.res" id="2_bu1yt"]
 
 [node name="main" type="Node2D"]
 script = ExtResource("1_wnls2")
@@ -10,6 +9,3 @@ script = ExtResource("1_wnls2")
 [node name="group00" type="Node" parent="."]
 
 [node name="mms_client" parent="group00" instance=ExtResource("2_bu1yt")]
-
-[node name="match_client" parent="group00" node_paths=PackedStringArray("mms_connection") instance=ExtResource("3_tb6bb")]
-mms_connection = NodePath("../mms_client")

@@ -1,4 +1,5 @@
 require("dotenv").config();
+const { application } = require("express");
 const session = require("express-session");
 const mysql = require("mysql2");
 const MySQLStore = require('express-mysql-session')(session);
@@ -14,33 +15,41 @@ const mysql_options = {
 
 // connect with a mysql database
 const connection = mysql.createConnection(mysql_options)
-//@export: create session store object for express session 
-const sessionStore = new MySQLStore({},connection);
 
-//
-sessionStore.onReady().then(
+//@export: create session store object for express session 
+const session_store = new MySQLStore({},connection);
+/*
+sessionStore.onReady().then( // MySQL session store ready for use.
     () => {
-        // MySQL session store ready for use.
-        if(process.env.initializeTables == "true"){
-            UserModel.createSchema()//`Failed to initialize Table on Database\n${err}`
-            UserPrivilegeModel.createSchema()//`Failed to initialize Table on Database\n${err}`
+        console.log('MySQLStore ready')
+        // Check if env tells us to reset database tables
+        if(process.env.resetTables == "true"){
+            console.warn("reset of tables begun")
+            const reset_actions = [
+                UserModel.dropSchema(),
+                MatchHistoryModel.dropSchema(),
+                UserModel.createSchema(),
+                MatchHistoryModel.createSchema()
+            ]
+            Promise.all(reset_actions).then(
+                () => console.warn("sucessfully reset database tables")
+            ).catch(
+                err => {console.warn(`could not reinitialize ${err}`)}
+            )
         }
-        console.log('MySQLStore ready');
     }
-).catch(
-    error => {
-        // Something went wrong.
-        console.error(error);
-    }
-);
+).catch( //fatal errors in session store creation
+    error => console.error(error)
+)
+*/
 
 
 ///========SQL-Masks========
 
-
+//      Users
 var UserModel = {}
 UserModel.createSchema = () =>{
-    const q = "CREATE TABLE User(username varchar(255) NOT NULL UNIQUE PRIMARY KEY, hash varchar(255) NOT NULL,salt varchar(255) NOT NULL,privilege TINYINT NOT NULL);"
+    const q = "CREATE TABLE User(username varchar(255) NOT NULL UNIQUE PRIMARY KEY, hash varchar(255) NOT NULL,salt varchar(255) NOT NULL,privilege TINYINT NOT NULL,rating INT NOT NULL);"
     return connection.promise().query(q)
 }
 UserModel.dropSchema = () =>{
@@ -48,15 +57,15 @@ UserModel.dropSchema = () =>{
     return connection.promise().query(q)
 }
 UserModel.findByUsername = (username) => {
-    const q = `SELECT username,hash,salt FROM User WHERE username = '${username}' LIMIT 1;`
+    const q = `SELECT username,hash,salt,privilege FROM User WHERE username = '${username}' LIMIT 1;`
     return connection.promise().query(q).then(
         (sqlRes) => { return sqlRes[0]}
-	);
+	)
 }
-UserModel.register = (username,hash,salt,privilege = 1) => {
-    const q = `INSERT INTO User(username,hash,salt,privilege) VALUES ('${username}','${hash}','${salt}','${privilege}');`
+UserModel.register = (username,hash,salt,privilege = 1,rating = 1000) => {
+    const q = `INSERT INTO User(username,hash,salt,privilege,rating) VALUES ('${username}','${hash}','${salt}','${privilege}','${rating}');`
     return connection.promise().query(q)
-};
+}
 UserModel.delete = (username) => {
     const q = `DELETE FROM User WHERE username = '${username}';`
     return connection.promise().query(q)
@@ -68,7 +77,59 @@ UserModel.getPrivilege = (username) => {
     );
 }
 UserModel.setPrivilege = (username,privilege) => {
-    const q = `UPDATE User(username,hash,salt,privilege) SET privilege='${privilege}' WHERE  SET username='${username}');`
+    const q = `UPDATE User SET privilege='${privilege}' WHERE username='${username}';`
     return connection.promise().query(q)
 };
-module.exports = {sessionStore,UserModel}
+UserModel.getRating = (username) => {
+    const q = `SELECT rating FROM User WHERE username ='${username}' LIMIT 1;`
+    return connection.promise().query(q).then(
+        (sqlRes) => sqlRes[0][0].rating
+    );
+}
+UserModel.setRating = (username,rating) => {
+    const q = `UPDATE User SET rating='${rating}' WHERE username='${username}';`
+    return connection.promise().query(q)
+};
+
+
+
+//      Matches
+var MatchHistoryModel = {}
+MatchHistoryModel.createSchema = () =>{
+    const q = "CREATE TABLE MatchHistory(match_id INT AUTO_INCREMENT PRIMARY KEY, host varchar(255) NOT NULL, players TEXT, start DATETIME DEFAULT NULL,end DATETIME,result TEXT);"
+    return connection.promise().query(q)
+}
+MatchHistoryModel.dropSchema = () =>{
+    const q = "DROP TABLE MatchHistory;"
+    return connection.promise().query(q)
+}
+MatchHistoryModel.getById = (match_id) => { 
+    const q = `SELECT * FROM MatchHistory WHERE match_id= '${match_id}';`
+    return connection.promise().query(q).then((sqlRes) => sqlRes[0])
+}
+MatchHistoryModel.addMatch = (username) => { 
+    const q = `INSERT INTO MatchHistory(host) VALUES ('${username}');`
+    return connection.promise().query(q).then(res => res[0]["insertId"])
+}
+MatchHistoryModel.setPlayers = (match_id,players) => {
+    const q = `UPDATE MatchHistory SET start = NOW(), players='${players}' WHERE match_id='${match_id}';`
+    return connection.promise().query(q)
+}
+MatchHistoryModel.getWaitingMatches = () => {
+    const q = `SELECT * FROM MatchHistory WHERE start IS NULL;`
+    return connection.promise().query(q).then(
+        (sqlRes) => console.log(sqlRes[0])
+    );
+}
+MatchHistoryModel.getRunningMatches = () => {
+    const q = `SELECT * FROM MatchHistory WHERE end IS NULL AND start IS NOT NULL;`
+    return connection.promise().query(q).then(
+        (sqlRes) => console.log(sqlRes[0])
+    );
+}
+MatchHistoryModel.setResult = (match_id,result) => {
+    const q = `UPDATE MatchHistory SET end = NOW(), result='${result}' WHERE match_id='${match_id}';`
+    return connection.promise().query(q)
+}
+
+module.exports = {session_store,UserModel,MatchHistoryModel}

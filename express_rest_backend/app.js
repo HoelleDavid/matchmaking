@@ -3,13 +3,15 @@ require("dotenv").config();
 const express 	= require('express');
 const session 	= require('express-session');
 const routes 	= require("routes");
+//const cors = require("cors");
+
 
 const args = process.argv.slice(1)
 
 
 
 ///========INIT DATABASE========
-const database = {sessionStore,UserModel,UserPrivilegeModel} = require("./controllers/database");
+const database = {session_store,UserModel,UserPrivilegeModel} = require("./controllers/database");
 ///========INIT EXPRESS========
 const app = module.exports = express();
 
@@ -22,15 +24,20 @@ app.use(session({
 	resave: false,
 	saveUninitialized: false
 }));
+//app.use(cors());
 ////========INIT ASSERTIONS======
 //const assetions = require("./controllers/assertions")
 //========INIT PASSPORT========
 const passport = {generateHashSalt,auth} = require("./controllers/passport-local")
+
 ///========ROUTES========
 const user_router = require("./routes/user")
 app.use("/user/",user_router)
-const mm_router = require("./routes/matchmaking")
+const admin_router = require("./routes/administration")
+app.use("/administration/",admin_router)
+const mm_router = require("./routes/matchmaking");
 app.use("/matchmaking/",mm_router)
+
 ///========ERR HANDLING AND PORT BINDING========
 function errHandler(err,req,res,next) { 
 	if (err){
@@ -42,6 +49,11 @@ function errHandler(err,req,res,next) {
 			case "Forbidden":
 				res.status(403).send(`Forbidden:\n ${err.message}`)
 				break
+			case "NotFound":
+				res.status(404).send(`NotFound:\n ${err.message}`)
+				break
+			case "Conflict":
+				res.status(409).send(`Conflict:\n ${err.message}`)
 			case "UnprocessableContent":
 				res.status(422).send(`UnprocessableContent:\n ${err.message}`)
 				break

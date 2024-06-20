@@ -1,0 +1,1 @@
+npm install express express-mysql-session express-session  mysql2 dotenv ajv passport passport-local crypto

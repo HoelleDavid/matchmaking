@@ -1,0 +1,8 @@
+{
+    "title":"QueueData",
+    "type":"object",
+    "required":["modes"],
+    "properties":{
+        "modes": {"type":"array"}
+    }
+}

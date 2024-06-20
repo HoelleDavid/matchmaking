@@ -5,27 +5,31 @@ const app = require("../app")
 //==============Controller===========================================
 const {AuthorizationAssertions,ContentAssertions} = require("../controllers/assertions");
 const { UserModel } = require("../controllers/database");
+const { auth } = require("../controllers/passport-local");
 // set session-user metadata on req.userdata
+
 
 app.use(
 	"/",
 	(req,res,next) => {
-		req.userdata = {
-			username : "",
-			privilege: 0
-		}
-		
-		if (req.isAuthenticated()){
+		if (!req.isAuthenticated()){
+			req.userdata = {
+				username : "",
+				privilege: 0
+			}
+			next()
+		}else{
 			req.userdata.username =  req.session.passport.user
 
-			UserModel.getPrivilege(req.userdata.username).then(
-				(privilege) => {
-					req.userdata.privilege = privilege
+			UserModel.findByUsername(req.userdata.username).then(
+				(userdata) => {
+					console.log(userdata)
+					req.userdata = userdata
 					next()
 				}
+			).catch(
+				err => console.error(`fatal database error in\n UserModel.findByUsername\n ${err}`)
 			)
-		}else{
-			next()
 		}
 	}
 )
@@ -35,41 +39,48 @@ app.use(
 //MMSA0 Register
 router.put(
 	"/",
-	ContentAssertions.assert_user_auth_data_schema,
+	ContentAssertions.assert_user_auth_data,
 	(req,res,next) => {
-		//add the user to the database
 		const hashSalt = generateHashSalt(req.body.password);
+		//add the user to the database
 		UserModel.register(req.body.username,hashSalt.hash,hashSalt.salt).then(
-			(_) => {
-				res.status(201).send("sucessful register go to <a href='/user/login/'> LOGIN </a>");
+			(sql_res) => {
+				console.log(sql_res)
+				res.status(201).send("sucessful register post to <a href='/user/login/'> LOGIN </a>");
 			}
 		).catch(
-			(err) => {
-				if(err.code === "ER_DUP_ENTRY"){
+			(err1) => {
+				if(err1.code === "ER_DUP_ENTRY"){
 					const err = new Error(`username already taken`)
         			err.name = "Locked"
+					next(err)
+				}else{
+					next(err1)
 				}
-				next(err)
 			}
-		);
+		)
 	}
 );
 
 //MMSA1 Login
 router.post(
 	"/login/",
-	ContentAssertions.assert_user_auth_data_schema,
+	(req,res,next) => {
+		console.log(req.body)
+		next()
+	},
+	ContentAssertions.assert_user_auth_data,
 	auth("local"),
 	(req,res,next) => {
-		res.send("success")
-		next()		
+		console.log(req.body)
+		res.status(200).send("success")	
 	}
 );
 
 //MMSA2 Logout
 router.post(
 	"/logout/",
-	AuthorizationAssertions.assert_user_auth,
+	AuthorizationAssertions.assert_privilege_minimum(1),
 	(req,res,next) => {
 		req.logout((err) => {
 			if (err) { return next(err); }
@@ -82,7 +93,7 @@ router.post(
 //MMSA3
 router.delete(
 	"/",
-	AuthorizationAssertions.assert_user_auth,
+	AuthorizationAssertions.assert_privilege_minimum(1),
 	(req,res,next) => {
 		UserModel.delete(req.userdata.username);
 		next();

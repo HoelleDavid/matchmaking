@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://blgjfyxitwapm"]
+
+[ext_resource type="PackedScene" uid="uid://ba3m7itsqusd" path="res://resource/net/mms_connection.res" id="1_vg08b"]
+[ext_resource type="PackedScene" uid="uid://u7if8j2b776b" path="res://resource/match_server/match_server_pool.res" id="2_r02a6"]
+
+[node name="ServerPool" type="Node"]
+
+[node name="mms_client" parent="." instance=ExtResource("1_vg08b")]
+
+[node name="MatchServerPool" parent="." instance=ExtResource("2_r02a6")]
+username = null
+password = null

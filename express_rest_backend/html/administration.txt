@@ -1,0 +1,11 @@
+<html> 
+    <h1>PROMOTE / DEMOTE</h1><br>
+    <a> 0:banned , 1:player , 2:host </a><br><br>
+    <form action="/administration" method="post">
+        <label username="username">username:</label>
+        <input type="text" id="username" name="username"><br>
+        <label privilege="privilege">privilege :</label>
+        <input type="number" id="privilege" name="privilege"><br><br>
+        <input type="submit" value="Submit">
+    </form> 
+</html>

@@ -26,7 +26,12 @@ GET /user/
 {"username" : "","privilege": 0	}
 ```
 
-
+players can join the queue via PUT /matchmaking/queue
+an empty request body or field in the request body assigns the player to all modes and estimates region by ip address.
+modes can indicate team sizes with an infix lead by "-" that seperates natural number team sized with "v" :
+```json
+{"region" :"48°25'23.8\"N 9°57'33.7\"E","modes": ["rated-1v1","unrated-1v1","rated-2v2","unrated-2v2"]	}
+```
 
 ##Privilege levels:
 

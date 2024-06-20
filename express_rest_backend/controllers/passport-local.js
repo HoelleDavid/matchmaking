@@ -13,26 +13,18 @@ const passport_options = {
 
 const verifyCallback = (username,password,done) => {
 	UserModel.findByUsername(username).then(
-		(users) => {return users[0]}
+		users => users[0]
 	).then(
 		(user) => {
-			if (!user) {
-				//User doesnt exist
-				return done(null,false);
-			}
-			if (isValidHash(password,user.hash,user.salt)){
-				//valid user credentials
-				return done(null,user);
-			}else{
-				//invalid user credentials
-				return done(null,false);
-			}
+			if (!user) //User doesnt exist
+				return done(null,false)
+			if (isValidHash(password,user.hash,user.salt)) //valid user password
+				return done(null,user) 	
+			else //invalid user credentials
+				return done(null,false) 
 		}
 	).catch(
-		(err) => {
-			//forward all errors trough passport to express
-			done(err);
-		}
+		err => 	done(err)
 	)
 }
 
@@ -52,7 +44,7 @@ const isValidHash = (password,hash,salt) => {
 }
 const auth = (strategy,redirects) => {
 	return passport.authenticate(strategy,redirects)
-};
+}
 
 
 //TODO allow other strats
