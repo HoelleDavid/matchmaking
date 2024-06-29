@@ -1,0 +1,10 @@
+<html> 
+    <h1>LOGIN</h1><br>
+    <form action="/user/login" method="POST">
+        <label username="username">username: </label>
+        <input type="text" id="username" name="username"><br>
+        <label password="password">password: </label>
+        <input type="password" id="password" name="password"><br><br>
+        <input type="submit" value="SUBMIT">
+    </form> 
+</html>

@@ -1,27 +1,24 @@
-extends state
+extends State
 class_name match_server_init_state
 
 func enter():
-	pass
+	print("match server initialized")
 	
 func exit():
-	print("match server matching")
+	print("match server obtained id: %s, started matching"%get_parent().match_id)
 
-var get_match_response = null
 func physics_process(delta):
-	if get_parent().mms_connection.is_awaiting_response():
-		return
-	if !get_parent().mms_connection.has_session():
-		print("awaiting mms session")
-		await get_parent().mms_connection.login(get_parent().username,get_parent().password)
-		return
+	var break_conditions = [
+		!get_parent().mms_connection,
+		get_parent().mms_connection.is_awaiting_response(),
+		!get_parent().mms_connection.has_session()
+	]
+	for condition in break_conditions:
+		if condition:
+			return
 	
-	if !get_match_response:
-		get_match_response = await get_parent().mms_connection.get_match("provided host adress")
-		return
-	
-	# has get_match response
-	print(get_match_response["body"])
-	get_parent().id = get_match_response["body"]
-	transition.emit(self,"matching_state")
+	var add_match_response = await get_parent().mms_connection.add_match()
+	print(add_match_response["body"])
+	get_parent().match_id = add_match_response["body"]
+	#transition.emit(self,"matching_state")
 	

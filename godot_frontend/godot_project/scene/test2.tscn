@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3 uid="uid://cdkiskvrwktcj"]
+
+[ext_resource type="PackedScene" uid="uid://ba3m7itsqusd" path="res://resource/net/mms_connection/mms_connection.res" id="1_vuwxg"]
+[ext_resource type="PackedScene" uid="uid://cg5pef0vaxpo7" path="res://resource/net/match_server/match_server.res" id="3_abwyg"]
+[ext_resource type="Script" path="res://scene/test2.gd" id="3_r7syg"]
+
+[node name="Test2" type="Node2D"]
+
+[node name="mms_connection" parent="." instance=ExtResource("1_vuwxg")]
+
+[node name="test_driver" type="Node" parent="."]
+script = ExtResource("3_r7syg")
+
+[node name="match_server" parent="." instance=ExtResource("3_abwyg")]

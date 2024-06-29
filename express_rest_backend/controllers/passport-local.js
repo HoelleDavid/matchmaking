@@ -2,66 +2,49 @@ const app = require("../app")
 require("dotenv").config();
 const passport 	= require("passport");
 const LocalStrategy = require('passport-local');
+const crypt = {generateHashSalt,isValidHash} = require("./crypt")
 const {UserModel} = require("./database")
-const crypto = require("crypto")
 
+//define json fields required in login body
 const passport_options = {
 	usernameField:"username",
 	passwordField:"password"
 };
 
-
-const verifyCallback = (username,password,done) => {
+//how to verify credentials, defines passport.authenticate
+//https://www.passportjs.org/concepts/authentication/strategies/
+const verifyCallback = (username,password,cb) => {
 	UserModel.findByUsername(username).then(
-		users => users[0]
-	).then(
 		(user) => {
 			if (!user) //User doesnt exist
-				return done(null,false)
+				return cb(null,false)
 			if (isValidHash(password,user.hash,user.salt)) //valid user password
-				return done(null,user) 	
+				return cb(null,user) 	
 			else //invalid user credentials
-				return done(null,false) 
+				return cb(null,false) 
 		}
 	).catch(
-		err => 	done(err)
+		err => 	cb(err)
 	)
 }
 
+// to module export the passport.authenticate
+const auth = (strategy,redirects) => passport.authenticate(strategy,redirects)
 
-const generateHashSalt = (password) =>	{
-	var salt = crypto.randomBytes(32).toString("hex");
-	var hash = crypto.pbkdf2Sync(password,salt,
-		Number(process.env.cryptIterationCount),Number(process.env.cryptKeyLength),process.env.cryptDigest
-	).toString("hex");
-	return {salt:salt,hash:hash}
-}
-const isValidHash = (password,hash,salt) => {
-	var verifyHash = crypto.pbkdf2Sync(password,salt,
-		Number(process.env.cryptIterationCount),Number(process.env.cryptKeyLength),process.env.cryptDigest
-	).toString("hex");
-	return hash === verifyHash;
-}
-const auth = (strategy,redirects) => {
-	return passport.authenticate(strategy,redirects)
-}
-
-
-//TODO allow other strats
 passport.use(new LocalStrategy(passport_options,verifyCallback))
 
 passport.serializeUser(
-	(user,done) => {
-		done(null,user.username);
+	(user,cb) => {
+		cb(null,user.username);
 	}
 );
-passport.deserializeUser( (username,done) => {
+passport.deserializeUser( (username,cb) => {
 	UserModel.findByUsername(username).then(
 		(user) => {
-			done(null,user);
+			cb(null,user);
 		}
 	).catch(
-		(err) => done(err)
+		(err) => cb(err)
 	)
 });
 

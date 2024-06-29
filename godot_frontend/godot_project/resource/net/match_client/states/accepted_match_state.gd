@@ -1,0 +1,2 @@
+extends State
+class_name match_client_accepted_state

@@ -1,2 +1,2 @@
-extends state
+extends State
 class_name match_client_found_match_state

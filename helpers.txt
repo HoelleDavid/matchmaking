@@ -57,7 +57,7 @@ async function reestimate_user_location(req) {
 
 ===========NPM=============
 
-npm install mysql2 express uid express-session express-mysql-session passport crypto connect-timeout ajv
+npm install mysql2 express uid express-session express-mysql-session passport crypto connect-timeout ajv method-override
 
 #--npm cache clean --force
 

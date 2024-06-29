@@ -1,4 +1,4 @@
-extends state
+extends State
 class_name match_client_playing_state
 
 var mms_connection = null

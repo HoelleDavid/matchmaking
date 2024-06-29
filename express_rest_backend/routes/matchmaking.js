@@ -103,7 +103,7 @@ router.put(
 			join_date:Date.now()
 		}
 		users[req.userdata.username].queue_entry = entry
-		res.status(201).send(`queue entry created ${entry}\n start polling at GET /matchmaking/queue/ to keep your entry active`)
+		res.status(201).send(entry)
 	}
 );
 
@@ -113,7 +113,8 @@ router.get(
 	"/queue/",
 	reset_user_timeout,
 	(req,res,next) => {
-		res.status(200).send(req.userdata.queue_entry)
+		console.log(users[req.userdata.username])
+		res.status(200).send(users[req.userdata.username])
 	}
 );
 //MMSB1 inspect match

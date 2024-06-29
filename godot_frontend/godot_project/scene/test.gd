@@ -1,6 +1,8 @@
 extends Node2D
 
-@onready var mms_clients_root = $mms_client_collection
+@onready var mms_players_root = $mms_player_collection
+@onready var mms_hosts_root = $mms_host_collection
+
 
 var players = []
 var hosts = []
@@ -37,5 +39,5 @@ func assert_delete_user(user,expect_res_codes = [200]):
 
 
 
-func _process(delta):
-	pass
+func _init():
+	players = players.get_children()

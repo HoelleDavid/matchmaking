@@ -57,22 +57,23 @@ ContentAssertions.assert_active_match_id = (matches) => (req,res,next) => {
 //Middleware functions to assert the privilege of requests
 var AuthorizationAssertions = {}
 AuthorizationAssertions.assert_privilege_minimum = (priv_min_int) => (req,res,next) => {
-    if( !req.userdata.privilege < priv_min_int ){
-        const err = new Error()
-        switch(req.userdata.privilege){
-            case 0:
-                if(req.isAuthenticated())
-                    err.message = "you are banned"
-                else
-                    err.message = "you are not logged in , try logging in via POST to /user/login or register via PUT to /user/"
-                break;
-            default:
-                err.message = `you are not privileged enough, required:${priv_min_int}, actual:${req.userdata.privilege}`
-        }
-        err.name = "Unauthorized"
-        return next(err)
+    if(req.userdata.privilege >= priv_min_int)
+        return next()
+
+    const err = new Error()
+    switch(req.userdata.privilege){
+        case 0:
+            if(req.isAuthenticated())
+                err.message = "you are banned"
+            else
+                err.message = "you are not logged in , try logging in via POST to /user/login or register via PUT to /user/"
+            break;
+        default:
+            err.message = `you are not privileged enough, required:${priv_min_int}, actual:${req.userdata.privilege}`
     }
-	next()
+    err.name = "Unauthorized"
+    return next(err)
+	
 }
 
 
