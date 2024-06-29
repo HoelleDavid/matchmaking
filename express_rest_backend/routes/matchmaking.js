@@ -5,8 +5,8 @@ const router = express.Router()
 //========Controller==========
 const {AuthorizationAssertions,ContentAssertions } = require("../controllers/assertions");
 const {queue_1v1_rated} = require("../controllers/queues.js");
-const { MatchHistoryModel } = require("../controllers/database.js");
-const { match } = require("routes");
+const { MatchModel } = require("../controllers/database.js");
+const Match = require("../controllers/match.js");
 
 const queues = [queue_1v1_rated]
 const queue_ids = queues.map(q => q.id)
@@ -229,7 +229,7 @@ router.put(
 router.get(
 	"/view/:match_id",
 	(req,res,next) => {
-		MatchHistoryModel.getById(req.params.match_id).then(
+		MatchModel.getById(req.params.match_id).then(
 			sqlRes => res.status(200).send(sqlRes)
 		).catch(
 			err => {
@@ -240,5 +240,7 @@ router.get(
 	}
 
 );
+
+//setTimeout(	()=>{const x = new Match().deserialize_from_history(1)}, 10)
 
 module.exports = router

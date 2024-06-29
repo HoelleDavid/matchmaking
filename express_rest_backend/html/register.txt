@@ -1,0 +1,10 @@
+<html> 
+    <h1>REGISTER</h1><br>
+    <form action="/user" method="PUT">
+        <label username="username">username: </label>
+        <input type="text" id="username" name="username"><br>
+        <label password="password">password: </label>
+        <input type="password" id="password" name="password"><br><br>
+        <input type="submit" value="Submit">
+    </form> 
+</html>

@@ -11,15 +11,14 @@ const mysql_options = {
 	user: process.env.SQLServerUser,
 	password: process.env.SQLServerPassword,
 	database: process.env.SQLServerSchema
-};
-
+}
 // connect with a mysql database
 const connection = mysql.createConnection(mysql_options)
-
 //@export: create session store object for express session 
-const session_store = new MySQLStore({},connection);
-/*
-sessionStore.onReady().then( // MySQL session store ready for use.
+const session_store = new MySQLStore(mysql_options,connection)
+
+
+session_store.onReady().then( // MySQL session store ready for use.
     () => {
         console.log('MySQLStore ready')
         // Check if env tells us to reset database tables
@@ -27,9 +26,9 @@ sessionStore.onReady().then( // MySQL session store ready for use.
             console.warn("reset of tables begun")
             const reset_actions = [
                 UserModel.dropSchema(),
-                MatchHistoryModel.dropSchema(),
+                MatchModel.dropSchema(),
                 UserModel.createSchema(),
-                MatchHistoryModel.createSchema()
+                MatchModel.createSchema()
             ]
             Promise.all(reset_actions).then(
                 () => console.warn("sucessfully reset database tables")
@@ -41,7 +40,6 @@ sessionStore.onReady().then( // MySQL session store ready for use.
 ).catch( //fatal errors in session store creation
     error => console.error(error)
 )
-*/
 
 
 ///========SQL-Masks========
@@ -74,7 +72,7 @@ UserModel.getPrivilege = (username) => {
     const q = `SELECT privilege FROM User WHERE username ='${username}' LIMIT 1;`
     return connection.promise().query(q).then(
         (sqlRes) => sqlRes[0][0].privilege
-    );
+    )
 }
 UserModel.setPrivilege = (username,privilege) => {
     const q = `UPDATE User SET privilege='${privilege}' WHERE username='${username}';`
@@ -94,42 +92,44 @@ UserModel.setRating = (username,rating) => {
 
 
 //      Matches
-var MatchHistoryModel = {}
-MatchHistoryModel.createSchema = () =>{
+var MatchModel = {}
+MatchModel.createSchema = () =>{
     const q = "CREATE TABLE MatchHistory(match_id INT AUTO_INCREMENT PRIMARY KEY, host varchar(255) NOT NULL, players TEXT, start DATETIME DEFAULT NULL,end DATETIME,result TEXT);"
     return connection.promise().query(q)
 }
-MatchHistoryModel.dropSchema = () =>{
+MatchModel.dropSchema = () =>{
     const q = "DROP TABLE MatchHistory;"
     return connection.promise().query(q)
 }
-MatchHistoryModel.getById = (match_id) => { 
+MatchModel.getById = (match_id) => { 
     const q = `SELECT * FROM MatchHistory WHERE match_id= '${match_id}';`
-    return connection.promise().query(q).then((sqlRes) => sqlRes[0])
+    return connection.promise().query(q).then(
+        (sqlRes) => sqlRes[0][0]
+    )
 }
-MatchHistoryModel.addMatch = (username) => { 
-    const q = `INSERT INTO MatchHistory(host) VALUES ('${username}');`
+MatchModel.addMatch = (match_id) => { 
+    const q = `INSERT INTO MatchHistory(id) VALUES ('${match_id}');`
     return connection.promise().query(q).then(res => res[0]["insertId"])
 }
-MatchHistoryModel.setPlayers = (match_id,players) => {
+MatchModel.setPlayers = (match_id,players) => {
     const q = `UPDATE MatchHistory SET start = NOW(), players='${players}' WHERE match_id='${match_id}';`
     return connection.promise().query(q)
 }
-MatchHistoryModel.getWaitingMatches = () => {
+MatchModel.getWaitingMatches = () => {
     const q = `SELECT * FROM MatchHistory WHERE start IS NULL;`
     return connection.promise().query(q).then(
         (sqlRes) => console.log(sqlRes[0])
     );
 }
-MatchHistoryModel.getRunningMatches = () => {
+MatchModel.getRunningMatches = () => {
     const q = `SELECT * FROM MatchHistory WHERE end IS NULL AND start IS NOT NULL;`
     return connection.promise().query(q).then(
         (sqlRes) => console.log(sqlRes[0])
     );
 }
-MatchHistoryModel.setResult = (match_id,result) => {
+MatchModel.setResult = (match_id,result) => {
     const q = `UPDATE MatchHistory SET end = NOW(), result='${result}' WHERE match_id='${match_id}';`
     return connection.promise().query(q)
 }
 
-module.exports = {session_store,UserModel,MatchHistoryModel}
+module.exports = {connection,session_store,UserModel,MatchModel}

@@ -1,3 +1,4 @@
+var fs = require("fs");
 const express = require("express");
 const router = express.Router()
 const app = require("../app")
@@ -41,13 +42,10 @@ router.put(
 	"/",
 	ContentAssertions.assert_user_auth_data,
 	(req,res,next) => {
-		const hashSalt = generateHashSalt(req.body.password);
+		const hashSalt = generateHashSalt(req.body.password)
 		//add the user to the database
 		UserModel.register(req.body.username,hashSalt.hash,hashSalt.salt).then(
-			(sql_res) => {
-				console.log(sql_res)
-				res.status(201).send("sucessful register post to <a href='/user/login/'> LOGIN </a>");
-			}
+			(sql_res) => res.status(201).send("sucessful register post to <a href='/user/login/'> LOGIN </a>")
 		).catch(
 			(err1) => {
 				if(err1.code === "ER_DUP_ENTRY"){
@@ -65,10 +63,6 @@ router.put(
 //MMSA1 Login
 router.post(
 	"/login/",
-	(req,res,next) => {
-		console.log(req.body)
-		next()
-	},
 	ContentAssertions.assert_user_auth_data,
 	auth("local"),
 	(req,res,next) => {
@@ -96,7 +90,7 @@ router.delete(
 	AuthorizationAssertions.assert_privilege_minimum(1),
 	(req,res,next) => {
 		UserModel.delete(req.userdata.username);
-		next();
+		res.status(200).send(`deleted ${req.userdata.username}`)
 	}
 );
 
@@ -105,10 +99,27 @@ router.delete(
 router.get(
 	"/",
 	(req,res,next) => {
-		res.status(200)
-		res.send(req.userdata)
+		res.status(200).send(req.userdata)
 	}
 );
 
 
+
+
+
+//Registration HTML
+var register_page = null
+var register_filename = require.resolve("../html/register.txt");
+fs.readFile(register_filename, 'utf8',
+	(err,res) => register_page = res
+)
+app.get(
+	"/register/",
+	(req,res,next)=>{
+		if(register_page)
+			res.status(200).send(register_page)
+		else 
+			next(new Error().name = "NotFound")
+	}
+)
 module.exports = router

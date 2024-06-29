@@ -1,29 +1,28 @@
 require("dotenv").config();
 
-const express 	= require('express');
-const session 	= require('express-session');
+const express 	= require("express")
+const session 	= require("express-session")
+const MySQLStore = require("express-mysql-session")(session)
 const routes 	= require("routes");
-//const cors = require("cors");
 
 
 const args = process.argv.slice(1)
 
 
-
 ///========INIT DATABASE========
-const database = {session_store,UserModel,UserPrivilegeModel} = require("./controllers/database");
+const database = {session_store,UserModel,UserPrivilegeModel,MatchModel} = require("./controllers/database");
 ///========INIT EXPRESS========
-const app = module.exports = express();
+const app = module.exports = express()
 
-app.use(express.json());
+app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(session({
 	key: 'mm_session_cookie',
 	secret: process.env.expressSessionSecret,
-	store: database.sessionStore,
+	store: session_store,
 	resave: false,
 	saveUninitialized: false
-}));
+}))
 //app.use(cors());
 ////========INIT ASSERTIONS======
 //const assetions = require("./controllers/assertions")
@@ -64,7 +63,7 @@ function errHandler(err,req,res,next) {
 			//this error is fatal for the end user and should not happen
 			//hopefully the closest thing to the api crashing post init
 			default:
-				res.status(500).send(`unhandled backend error:\n ${err.message}`)
+				res.status(500).send("InternalServerError")//`InternalServerError:\n ${err.message}`) exposes stack traces to frontend
 				console.warn(`unhandled error:\n ${err}`)
 		}
 	}
