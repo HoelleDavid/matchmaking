@@ -2,24 +2,23 @@ const Ajv = require('ajv');
 const ajv = new Ajv();
 
 const user_auth_data_schema = require("../../schema/user_auth_data.json");
-const queue_data_schema     = require("../../schema/join_queue_data.json");
-const host_data_schema      = require("../../schema/host_data.json");
+//const host_data_schema      = require("../../schema/host_data.json");
 const e = require('connect-timeout');
 
 
 var ContentAssertions = {}
 
 //Register and login data
-const _username_regex = ".*"
-const _password_regex = ".*"
 ContentAssertions.assert_user_auth_data = (req,res,next) => {
-    console.log(req.body.password)
     if(!ajv.validate(user_auth_data_schema,req.body)){
         const err = new Error(`user login and register data must follow\n${JSON.stringify(user_auth_data_schema)}`)
         err.name = "UnprocessableContent"
-        return next(err)
+        next(err)
+        return
     }
     /*
+    const _username_regex = ".*"
+    const _password_regex = ".*"
     if(!req.body.username.matches(_username_regex) || !req.body.password.matches(_password_regex)){
         const err = new Error(`username,password must each regex match ${_username_regex}`)
         err.name = "UnprocessableContent"
@@ -44,10 +43,11 @@ ContentAssertions.assert_queue_id = (queues) => (req,res,next) => {
 // assertions for matchid in active ["MATCHING","MATCH_FOUND","PLAYING"] mathce
 ContentAssertions.assert_active_match_id = (matches) => (req,res,next) => {
     const req_match_id = req.params.match_id
-    if(!req_match_id in matches.map(m => m.id == req_match_id)){
-        err = new Error(`match id ${req_match_id} not found`)
+    if(!matches[req_match_id]){
+        const err = new Error(`match id ${req_match_id} not found`)
         err.name = "Not Found"
-        return next(err)
+        next(err)
+        return
     }
     next()
 }
@@ -57,22 +57,23 @@ ContentAssertions.assert_active_match_id = (matches) => (req,res,next) => {
 //Middleware functions to assert the privilege of requests
 var AuthorizationAssertions = {}
 AuthorizationAssertions.assert_privilege_minimum = (priv_min_int) => (req,res,next) => {
-    if( !req.userdata.privilege < priv_min_int ){
-        const err = new Error()
-        switch(req.userdata.privilege){
-            case 0:
-                if(req.isAuthenticated())
-                    err.message = "you are banned"
-                else
-                    err.message = "you are not logged in , try logging in via POST to /user/login or register via PUT to /user/"
-                break;
-            default:
-                err.message = `you are not privileged enough, required:${priv_min_int}, actual:${req.userdata.privilege}`
-        }
-        err.name = "Unauthorized"
-        return next(err)
+    if(req.userdata.privilege >= priv_min_int)
+        return next()
+
+    const err = new Error()
+    switch(req.userdata.privilege){
+        case 0:
+            if(req.isAuthenticated())
+                err.message = "you are banned"
+            else
+                err.message = "you are not logged in , try logging in via POST to /user/login or register via PUT to /user/"
+            break;
+        default:
+            err.message = `you are not privileged enough, required:${priv_min_int}, actual:${req.userdata.privilege}`
     }
-	next()
+    err.name = "Unauthorized"
+    return next(err)
+	
 }
 
 

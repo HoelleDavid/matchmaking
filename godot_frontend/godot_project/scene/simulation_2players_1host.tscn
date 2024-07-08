@@ -1,0 +1,47 @@
+[gd_scene load_steps=5 format=3 uid="uid://d0gfdpiiq10a0"]
+
+[ext_resource type="PackedScene" uid="uid://ba3m7itsqusd" path="res://resource/net/mms_connection/mms_connection.res" id="1_eevcn"]
+[ext_resource type="Script" path="res://resource/net/mms_connection/mms_connection_bootstrapper.gd" id="2_wtqws"]
+[ext_resource type="PackedScene" uid="uid://cg5pef0vaxpo7" path="res://resource/net/match_server/match_server.res" id="3_5htkv"]
+[ext_resource type="PackedScene" uid="uid://b6otd2ubk4a4b" path="res://resource/net/match_client/match_client.res" id="4_gkitc"]
+
+[node name="Simulations" type="Node2D"]
+
+[node name="server_env" type="Node" parent="."]
+
+[node name="mms_connection" parent="server_env" instance=ExtResource("1_eevcn")]
+
+[node name="bootstrap" type="Node" parent="server_env" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_wtqws")
+mms = NodePath("../mms_connection")
+username = "host__000"
+password = "host__000"
+
+[node name="match_server" parent="server_env" node_paths=PackedStringArray("mms_connection") instance=ExtResource("3_5htkv")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="client_env" type="Node" parent="."]
+
+[node name="mms_connection" parent="client_env" instance=ExtResource("1_eevcn")]
+
+[node name="bootstrap" type="Node" parent="client_env" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_wtqws")
+mms = NodePath("../mms_connection")
+username = "player_100"
+password = "player_100"
+
+[node name="match_client" parent="client_env" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_gkitc")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="client_env2" type="Node" parent="."]
+
+[node name="mms_connection" parent="client_env2" instance=ExtResource("1_eevcn")]
+
+[node name="bootstrap" type="Node" parent="client_env2" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_wtqws")
+mms = NodePath("../mms_connection")
+username = "player_010"
+password = "player_010"
+
+[node name="match_client" parent="client_env2" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_gkitc")]
+mms_connection = NodePath("../mms_connection")

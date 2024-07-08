@@ -1,0 +1,337 @@
+[gd_scene load_steps=5 format=3 uid="uid://dr6vfeig0iwm2"]
+
+[ext_resource type="PackedScene" uid="uid://ba3m7itsqusd" path="res://resource/net/mms_connection/mms_connection.res" id="1_6xhml"]
+[ext_resource type="Script" path="res://resource/net/mms_connection/mms_connection_bootstrapper.gd" id="2_gtmeq"]
+[ext_resource type="PackedScene" uid="uid://cg5pef0vaxpo7" path="res://resource/net/match_server/match_server.res" id="3_4khr0"]
+[ext_resource type="PackedScene" uid="uid://b6otd2ubk4a4b" path="res://resource/net/match_client/match_client.res" id="4_y1cs6"]
+
+[node name="Simulations" type="Node2D"]
+
+[node name="clients" type="Node" parent="."]
+
+[node name="client_env" type="Node" parent="clients"]
+
+[node name="mms_connection" parent="clients/client_env" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="clients/client_env" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "player_001"
+password = "player_001"
+
+[node name="match_client" parent="clients/client_env" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_y1cs6")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="client_env2" type="Node" parent="clients"]
+
+[node name="mms_connection" parent="clients/client_env2" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="clients/client_env2" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "player_002"
+password = "player_002"
+
+[node name="match_client" parent="clients/client_env2" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_y1cs6")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="client_env3" type="Node" parent="clients"]
+
+[node name="mms_connection" parent="clients/client_env3" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="clients/client_env3" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "player_003"
+password = "player_003"
+
+[node name="match_client" parent="clients/client_env3" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_y1cs6")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="client_env4" type="Node" parent="clients"]
+
+[node name="mms_connection" parent="clients/client_env4" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="clients/client_env4" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "player_004"
+password = "player_004"
+
+[node name="match_client" parent="clients/client_env4" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_y1cs6")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="client_env5" type="Node" parent="clients"]
+
+[node name="mms_connection" parent="clients/client_env5" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="clients/client_env5" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "player_005"
+password = "player_005"
+
+[node name="match_client" parent="clients/client_env5" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_y1cs6")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="client_env6" type="Node" parent="clients"]
+
+[node name="mms_connection" parent="clients/client_env6" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="clients/client_env6" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "player_006"
+password = "player_006"
+
+[node name="match_client" parent="clients/client_env6" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_y1cs6")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="client_env7" type="Node" parent="clients"]
+
+[node name="mms_connection" parent="clients/client_env7" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="clients/client_env7" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "player_007"
+password = "player_007"
+
+[node name="match_client" parent="clients/client_env7" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_y1cs6")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="client_env8" type="Node" parent="clients"]
+
+[node name="mms_connection" parent="clients/client_env8" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="clients/client_env8" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "player_008"
+password = "player_008"
+
+[node name="match_client" parent="clients/client_env8" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_y1cs6")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="client_env9" type="Node" parent="clients"]
+
+[node name="mms_connection" parent="clients/client_env9" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="clients/client_env9" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "player_009"
+password = "player_009"
+
+[node name="match_client" parent="clients/client_env9" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_y1cs6")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="client_env10" type="Node" parent="clients"]
+
+[node name="mms_connection" parent="clients/client_env10" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="clients/client_env10" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "player_010"
+password = "player_010"
+
+[node name="match_client" parent="clients/client_env10" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_y1cs6")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="client_env11" type="Node" parent="clients"]
+
+[node name="mms_connection" parent="clients/client_env11" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="clients/client_env11" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "player_011"
+password = "player_011"
+
+[node name="match_client" parent="clients/client_env11" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_y1cs6")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="client_env12" type="Node" parent="clients"]
+
+[node name="mms_connection" parent="clients/client_env12" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="clients/client_env12" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "player_012"
+password = "player_012"
+
+[node name="match_client" parent="clients/client_env12" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_y1cs6")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="client_env13" type="Node" parent="clients"]
+
+[node name="mms_connection" parent="clients/client_env13" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="clients/client_env13" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "player_013"
+password = "player_013"
+
+[node name="match_client" parent="clients/client_env13" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_y1cs6")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="client_env14" type="Node" parent="clients"]
+
+[node name="mms_connection" parent="clients/client_env14" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="clients/client_env14" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "player_014"
+password = "player_014"
+
+[node name="match_client" parent="clients/client_env14" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_y1cs6")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="client_env15" type="Node" parent="clients"]
+
+[node name="mms_connection" parent="clients/client_env15" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="clients/client_env15" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "player_015"
+password = "player_015"
+
+[node name="match_client" parent="clients/client_env15" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_y1cs6")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="client_env16" type="Node" parent="clients"]
+
+[node name="mms_connection" parent="clients/client_env16" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="clients/client_env16" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "player_016"
+password = "player_016"
+
+[node name="match_client" parent="clients/client_env16" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_y1cs6")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="client_env17" type="Node" parent="clients"]
+
+[node name="mms_connection" parent="clients/client_env17" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="clients/client_env17" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "player_017"
+password = "player_017"
+
+[node name="match_client" parent="clients/client_env17" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_y1cs6")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="client_env18" type="Node" parent="clients"]
+
+[node name="mms_connection" parent="clients/client_env18" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="clients/client_env18" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "player_018"
+password = "player_018"
+
+[node name="match_client" parent="clients/client_env18" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_y1cs6")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="client_env19" type="Node" parent="clients"]
+
+[node name="mms_connection" parent="clients/client_env19" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="clients/client_env19" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "player_019"
+password = "player_019"
+
+[node name="match_client" parent="clients/client_env19" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_y1cs6")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="client_env20" type="Node" parent="clients"]
+
+[node name="mms_connection" parent="clients/client_env20" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="clients/client_env20" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "player_020"
+password = "player_020"
+
+[node name="match_client" parent="clients/client_env20" node_paths=PackedStringArray("mms_connection") instance=ExtResource("4_y1cs6")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="hosts" type="Node" parent="."]
+
+[node name="server_env" type="Node" parent="hosts"]
+
+[node name="mms_connection" parent="hosts/server_env" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="hosts/server_env" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "host__001"
+password = "host__001"
+
+[node name="match_server" parent="hosts/server_env" node_paths=PackedStringArray("mms_connection") instance=ExtResource("3_4khr0")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="server_env2" type="Node" parent="hosts"]
+
+[node name="mms_connection" parent="hosts/server_env2" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="hosts/server_env2" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "host__002"
+password = "host__002"
+
+[node name="match_server" parent="hosts/server_env2" node_paths=PackedStringArray("mms_connection") instance=ExtResource("3_4khr0")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="server_env3" type="Node" parent="hosts"]
+
+[node name="mms_connection" parent="hosts/server_env3" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="hosts/server_env3" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "host__003"
+password = "host__003"
+
+[node name="match_server" parent="hosts/server_env3" node_paths=PackedStringArray("mms_connection") instance=ExtResource("3_4khr0")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="server_env4" type="Node" parent="hosts"]
+
+[node name="mms_connection" parent="hosts/server_env4" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="hosts/server_env4" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "host__004"
+password = "host__004"
+
+[node name="match_server" parent="hosts/server_env4" node_paths=PackedStringArray("mms_connection") instance=ExtResource("3_4khr0")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="server_env5" type="Node" parent="hosts"]
+
+[node name="mms_connection" parent="hosts/server_env5" instance=ExtResource("1_6xhml")]
+
+[node name="bootstrap" type="Node" parent="hosts/server_env5" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_gtmeq")
+mms = NodePath("../mms_connection")
+username = "host__005"
+password = "host__005"
+
+[node name="match_server" parent="hosts/server_env5" node_paths=PackedStringArray("mms_connection") instance=ExtResource("3_4khr0")]
+mms_connection = NodePath("../mms_connection")

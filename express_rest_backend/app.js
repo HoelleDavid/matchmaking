@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const express 	= require("express")
+const methodOverride = require('method-override')
 const session 	= require("express-session")
 const MySQLStore = require("express-mysql-session")(session)
 const routes 	= require("routes");
@@ -13,9 +14,12 @@ const args = process.argv.slice(1)
 const database = {session_store,UserModel,UserPrivilegeModel,MatchModel} = require("./controllers/database");
 ///========INIT EXPRESS========
 const app = module.exports = express()
-
+//parses JSON bodys
 app.use(express.json())
+//parses html form like syntax
 app.use(express.urlencoded({extended:true}))
+//allows sendig html forms with overridden _method
+app.use(methodOverride("_method")) 
 app.use(session({
 	key: 'mm_session_cookie',
 	secret: process.env.expressSessionSecret,
@@ -23,9 +27,6 @@ app.use(session({
 	resave: false,
 	saveUninitialized: false
 }))
-//app.use(cors());
-////========INIT ASSERTIONS======
-//const assetions = require("./controllers/assertions")
 //========INIT PASSPORT========
 const passport = {generateHashSalt,auth} = require("./controllers/passport-local")
 

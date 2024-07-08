@@ -1,8 +1,9 @@
 require("dotenv").config();
-const { application } = require("express");
 const session = require("express-session");
 const mysql = require("mysql2");
 const MySQLStore = require('express-mysql-session')(session);
+
+const { generateHashSalt } = require("./crypt")
 
 //server config hidden in /.env file
 const mysql_options = {
@@ -19,23 +20,30 @@ const session_store = new MySQLStore(mysql_options,connection)
 
 
 session_store.onReady().then( // MySQL session store ready for use.
+    () => console.log('MySQLStore ready')     
+).then(
     () => {
-        console.log('MySQLStore ready')
-        // Check if env tells us to reset database tables
-        if(process.env.resetTables == "true"){
-            console.warn("reset of tables begun")
-            const reset_actions = [
+        var reset_actions = []
+        // Check if env tells us to reset database tables and admin credentials
+        if(process.env.resetTables != "true")
+            reset_actions += [
                 UserModel.dropSchema(),
                 MatchModel.dropSchema(),
                 UserModel.createSchema(),
                 MatchModel.createSchema()
             ]
-            Promise.all(reset_actions).then(
-                () => console.warn("sucessfully reset database tables")
-            ).catch(
-                err => {console.warn(`could not reinitialize ${err}`)}
-            )
+        if(process.env.resetAdmin == "true"){
+            const hash_salt = generateHashSalt(process.env.adminPassword)
+            reset_actions += [
+                UserModel.delete(process.env.adminUsername),
+                UserModel.register(process.env.adminUsername,hash_salt.hash,hash_salt.salt,3)
+            ]
         }
+        Promise.all(reset_actions).then(
+            () => console.warn("completed reset actions from .env")
+        ).catch(
+            err => {console.warn(`failed reset actions from .env ${err}`)}
+        )
     }
 ).catch( //fatal errors in session store creation
     error => console.error(error)
@@ -55,9 +63,9 @@ UserModel.dropSchema = () =>{
     return connection.promise().query(q)
 }
 UserModel.findByUsername = (username) => {
-    const q = `SELECT username,hash,salt,privilege FROM User WHERE username = '${username}' LIMIT 1;`
+    const q = `SELECT username,hash,salt,privilege,rating FROM User WHERE username = '${username}' LIMIT 1;`
     return connection.promise().query(q).then(
-        (sqlRes) => { return sqlRes[0]}
+        sqlRes => sqlRes[0][0]
 	)
 }
 UserModel.register = (username,hash,salt,privilege = 1,rating = 1000) => {
@@ -107,8 +115,8 @@ MatchModel.getById = (match_id) => {
         (sqlRes) => sqlRes[0][0]
     )
 }
-MatchModel.addMatch = (match_id) => { 
-    const q = `INSERT INTO MatchHistory(id) VALUES ('${match_id}');`
+MatchModel.addMatch = (host_username) => { 
+    const q = `INSERT INTO MatchHistory(host) VALUES ('${host_username}');`
     return connection.promise().query(q).then(res => res[0]["insertId"])
 }
 MatchModel.setPlayers = (match_id,players) => {

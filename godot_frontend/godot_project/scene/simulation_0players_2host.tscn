@@ -1,0 +1,33 @@
+[gd_scene load_steps=4 format=3 uid="uid://ky4hq4jfqc86"]
+
+[ext_resource type="PackedScene" uid="uid://ba3m7itsqusd" path="res://resource/net/mms_connection/mms_connection.res" id="1_mdjd4"]
+[ext_resource type="Script" path="res://resource/net/mms_connection/mms_connection_bootstrapper.gd" id="2_3akyx"]
+[ext_resource type="PackedScene" uid="uid://cg5pef0vaxpo7" path="res://resource/net/match_server/match_server.res" id="3_suk3q"]
+
+[node name="Simulations" type="Node2D"]
+
+[node name="server_env" type="Node" parent="."]
+
+[node name="mms_connection" parent="server_env" instance=ExtResource("1_mdjd4")]
+
+[node name="bootstrap" type="Node" parent="server_env" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_3akyx")
+mms = NodePath("../mms_connection")
+username = "host__000"
+password = "host__000"
+
+[node name="match_server" parent="server_env" node_paths=PackedStringArray("mms_connection") instance=ExtResource("3_suk3q")]
+mms_connection = NodePath("../mms_connection")
+
+[node name="server_env2" type="Node" parent="."]
+
+[node name="mms_connection" parent="server_env2" instance=ExtResource("1_mdjd4")]
+
+[node name="bootstrap" type="Node" parent="server_env2" node_paths=PackedStringArray("mms")]
+script = ExtResource("2_3akyx")
+mms = NodePath("../mms_connection")
+username = "host__001"
+password = "host__001"
+
+[node name="match_server" parent="server_env2" node_paths=PackedStringArray("mms_connection") instance=ExtResource("3_suk3q")]
+mms_connection = NodePath("../mms_connection")

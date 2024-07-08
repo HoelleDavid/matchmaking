@@ -1,8 +1,25 @@
-[gd_scene load_steps=2 format=3 uid="uid://cviudc0wjlq34"]
+[gd_scene load_steps=3 format=3 uid="uid://cviudc0wjlq34"]
 
 [ext_resource type="Script" path="res://scene/test.gd" id="1_pwpti"]
+[ext_resource type="PackedScene" uid="uid://ba3m7itsqusd" path="res://resource/net/mms_connection/mms_connection.res" id="2_iymge"]
 
 [node name="test_root" type="Node2D"]
 script = ExtResource("1_pwpti")
 
-[node name="mms_client_collection" type="Node" parent="."]
+[node name="mms_player_collection" type="Node" parent="."]
+
+[node name="mms_connection" parent="mms_player_collection" instance=ExtResource("2_iymge")]
+
+[node name="mms_connection2" parent="mms_player_collection" instance=ExtResource("2_iymge")]
+
+[node name="mms_connection3" parent="mms_player_collection" instance=ExtResource("2_iymge")]
+
+[node name="mms_connection4" parent="mms_player_collection" instance=ExtResource("2_iymge")]
+
+[node name="mms_connection5" parent="mms_player_collection" instance=ExtResource("2_iymge")]
+
+[node name="mms_host_collection" type="Node" parent="."]
+
+[node name="mms_connection" parent="mms_host_collection" instance=ExtResource("2_iymge")]
+
+[node name="mms_connection2" parent="mms_host_collection" instance=ExtResource("2_iymge")]

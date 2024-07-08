@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://cdkiskvrwktcj"]
+
+[ext_resource type="PackedScene" uid="uid://ba3m7itsqusd" path="res://resource/net/mms_connection/mms_connection.res" id="1_lbgre"]
+[ext_resource type="PackedScene" uid="uid://cg5pef0vaxpo7" path="res://resource/net/match_server/match_server.res" id="2_kjpgo"]
+[ext_resource type="Script" path="res://resource/net/mms_connection/mms_connection_bootstrapper.gd" id="3_ymcoc"]
+
+[node name="server_env" type="Node2D"]
+
+[node name="mms_connection" parent="." instance=ExtResource("1_lbgre")]
+
+[node name="bootstrap" type="Node" parent="." node_paths=PackedStringArray("mms")]
+script = ExtResource("3_ymcoc")
+mms = NodePath("../mms_connection")
+username = "host_0001"
+password = "host_0001"
+
+[node name="match_server" parent="." node_paths=PackedStringArray("mms_connection") instance=ExtResource("2_kjpgo")]
+mms_connection = NodePath("../mms_connection")

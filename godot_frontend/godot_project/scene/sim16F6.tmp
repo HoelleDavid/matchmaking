@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3 uid="uid://d0gfdpiiq10a0"]
+
+[ext_resource type="PackedScene" uid="uid://evk3g4rgc4c" path="res://resource/net/match_server/server_env.res" id="1_pf83e"]
+[ext_resource type="PackedScene" uid="uid://cjjc05euolafu" path="res://resource/net/match_client/client_env.res" id="2_xx3m2"]
+
+[node name="Simulations" type="Node2D"]
+
+[node name="server_env" parent="." instance=ExtResource("1_pf83e")]
+
+[node name="client_env" parent="." instance=ExtResource("2_xx3m2")]
+
+[node name="bootstrap" parent="client_env" index="1"]
+username = "player_100"
+password = "player_100"
+
+[node name="client_env2" parent="." instance=ExtResource("2_xx3m2")]
+
+[node name="bootstrap" parent="client_env2" index="1"]
+username = "player_010"
+password = "player_010"
+
+[editable path="server_env"]
+[editable path="client_env"]
+[editable path="client_env2"]

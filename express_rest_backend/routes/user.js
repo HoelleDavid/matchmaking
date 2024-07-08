@@ -3,13 +3,14 @@ const express = require("express");
 const router = express.Router()
 const app = require("../app")
 
-//==============Controller===========================================
 const {AuthorizationAssertions,ContentAssertions} = require("../controllers/assertions");
 const { UserModel } = require("../controllers/database");
-const { auth } = require("../controllers/passport-local");
+const { auth,generateHashSalt } = require("../controllers/passport-local");
+
+//==============Controller=================================
+
+
 // set session-user metadata on req.userdata
-
-
 app.use(
 	"/",
 	(req,res,next) => {
@@ -18,60 +19,53 @@ app.use(
 				username : "",
 				privilege: 0
 			}
-			next()
-		}else{
-			req.userdata.username =  req.session.passport.user
-
-			UserModel.findByUsername(req.userdata.username).then(
-				(userdata) => {
-					console.log(userdata)
-					req.userdata = userdata
-					next()
-				}
-			).catch(
-				err => console.error(`fatal database error in\n UserModel.findByUsername\n ${err}`)
-			)
+			return next()
 		}
+		UserModel.findByUsername(req.session.passport.user).then(
+			userdata =>{req.userdata = userdata;next()}
+		).catch(
+			err => next(err) //unexpected
+		)
+		
 	}
 )
 
 
-//========Route endpoints========
-//MMSA0 Register
+//========Route endpoints==============================
+
+//REGISTER
 router.put(
 	"/",
 	ContentAssertions.assert_user_auth_data,
 	(req,res,next) => {
-		const hashSalt = generateHashSalt(req.body.password)
+		const hash_salt = generateHashSalt(req.body.password)
 		//add the user to the database
-		UserModel.register(req.body.username,hashSalt.hash,hashSalt.salt).then(
-			(sql_res) => res.status(201).send("sucessful register post to <a href='/user/login/'> LOGIN </a>")
+		UserModel.register(req.body.username,hash_salt.hash,hash_salt.salt).then(
+			(sql_res) => res.status(201).send("sucessful register POST to /user/login/ to log in")
 		).catch(
-			(err1) => {
-				if(err1.code === "ER_DUP_ENTRY"){
-					const err = new Error(`username already taken`)
-        			err.name = "Locked"
-					next(err)
-				}else{
-					next(err1)
+			(err) => {
+				if(err.code === "ER_DUP_ENTRY"){
+					inner_err = new Error(`username already taken`)
+					inner_err.name = "Locked"
+					return next(inner_err)	
 				}
+				return next(err) //unexpected
 			}
 		)
 	}
 );
 
-//MMSA1 Login
+//LOGIN
 router.post(
 	"/login/",
 	ContentAssertions.assert_user_auth_data,
 	auth("local"),
 	(req,res,next) => {
-		console.log(req.body)
-		res.status(200).send("success")	
+		res.status(200).send("login success")	
 	}
 );
 
-//MMSA2 Logout
+//LOOGOUT
 router.post(
 	"/logout/",
 	AuthorizationAssertions.assert_privilege_minimum(1),
@@ -84,7 +78,7 @@ router.post(
 	}
 );
 
-//MMSA3
+//DELETE_USER
 router.delete(
 	"/",
 	AuthorizationAssertions.assert_privilege_minimum(1),
@@ -95,7 +89,7 @@ router.delete(
 );
 
 
-//MMSA4
+//GET_USER
 router.get(
 	"/",
 	(req,res,next) => {
@@ -104,8 +98,7 @@ router.get(
 );
 
 
-
-
+//============Convenient HTMLs===============================
 
 //Registration HTML
 var register_page = null
@@ -122,4 +115,22 @@ app.get(
 			next(new Error().name = "NotFound")
 	}
 )
+
+//login HTML
+var login_page = null
+var login_filename = require.resolve("../html/login.txt")
+fs.readFile(login_filename, 'utf8',
+	(err,res) => login_page = res
+)
+app.get(
+	"/login/",
+	(req,res,next)=>{
+		if(login_page)
+			res.status(200).send(login_page)
+		else 
+			next(new Error().name = "NotFound")
+	}
+)
+
+
 module.exports = router
